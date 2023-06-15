@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.databinding.FragmentTodoListBinding
@@ -26,7 +27,7 @@ class TodoListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnAdd.setOnClickListener {
-            MAIN.navController.navigate(R.id.action_todoListFragment_to_addTaskFragment)
+            findNavController().navigate(R.id.action_todoListFragment_to_addTaskFragment)
         }
         adapter = TodoAdapter()
         recyclerView = binding.rvTodolist

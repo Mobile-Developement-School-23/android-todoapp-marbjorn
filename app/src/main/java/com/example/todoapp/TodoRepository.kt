@@ -3,9 +3,10 @@ package com.example.todoapp
 import android.content.Context
 import java.util.*
 
-class TodoRepository {
-    private lateinit var items : MutableList<TodoItem>
 
+
+class TodoRepository {
+    private var items : MutableList<TodoItem>
     init {
         items = mutableListOf<TodoItem>(
             TodoItem("1",
