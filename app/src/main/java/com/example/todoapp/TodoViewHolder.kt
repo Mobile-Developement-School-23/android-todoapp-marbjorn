@@ -12,6 +12,7 @@ class TodoViewHolder(todoView : View) : RecyclerView.ViewHolder(todoView) {
 
     private val done : CheckBox = todoView.findViewById(R.id.cb_done)
     private val text : TextView = todoView.findViewById(R.id.tv_text)
+    private val info : ImageView = todoView.findViewById(R.id.iv_info)
     private val iconPriority : ImageView = todoView.findViewById(R.id.iv_priority)
 
     fun onBind(todoItem : TodoItem) {
@@ -30,5 +31,8 @@ class TodoViewHolder(todoView : View) : RecyclerView.ViewHolder(todoView) {
             }
         }
 
+        info.setOnClickListener {
+
+        }
     }
 }
