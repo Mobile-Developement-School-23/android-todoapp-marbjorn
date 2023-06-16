@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:text="Сохранить"
+        android:text="@string/save"
         android:textColor="@color/color_light_blue"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +33,7 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
-        android:hint="Что я должен сделать?"
+        android:hint="@string/todo_edit_hint"
 
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         >
@@ -61,7 +61,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Важность"
+            android:text="@string/importance"
             android:textSize="19sp"
             android:id="@+id/tv_importance"
             android:textStyle="bold"
@@ -70,7 +70,7 @@
             android:id="@+id/tv_current_priority"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Нет важности"
+            android:text="@string/no_importance"
             />
 
     </LinearLayout>
@@ -99,7 +99,7 @@
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Дата"
+            android:text="@string/date"
             android:textSize="19sp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -109,10 +109,11 @@
             android:id="@+id/tv_current_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Не выбрано"
+            android:text="@string/deadline_not_selected"
             app:layout_constraintTop_toBottomOf="@id/tv_date"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:textColor="@color/color_light_blue"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <com.google.android.material.divider.MaterialDivider
@@ -139,7 +140,7 @@
         android:textColor="@color/color_light_red"
         app:layout_constraintTop_toBottomOf="@id/div2"
         app:layout_constraintStart_toStartOf="parent"
-        android:text="Удалить"
+        android:text="@string/delete"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"

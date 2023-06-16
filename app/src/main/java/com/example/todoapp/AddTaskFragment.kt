@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.createViewModelLazy
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -125,11 +126,10 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     }
 
     fun setPriorityInView(priority: Priority) = with(binding) {
-        tvCurrentPriority.text = getString(R.string.high_priority)
         when (priority) {
-            Priority.HIGH -> tvCurrentPriority.text = getString(R.string.high_priority)
-            Priority.MEDIUM -> tvCurrentPriority.text = getString(R.string.medium_priority)
-            Priority.LOW -> tvCurrentPriority.text = getString(R.string.low_priority)
+            Priority.HIGH -> tvCurrentPriority.text = getString(R.string.priority_high)
+            Priority.MEDIUM -> tvCurrentPriority.text = getString(R.string.priority_common)
+            Priority.LOW -> tvCurrentPriority.text = getString(R.string.priority_low)
         }
     }
 

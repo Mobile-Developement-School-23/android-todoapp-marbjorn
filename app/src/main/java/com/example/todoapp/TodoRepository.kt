@@ -1,6 +1,7 @@
 package com.example.todoapp
 
 import android.content.Context
+import androidx.lifecycle.LiveData
 import java.util.*
 
 
@@ -9,53 +10,53 @@ class TodoRepository {
     private var items : MutableList<TodoItem>
     init {
         items = mutableListOf<TodoItem>(
-            TodoItem("1",
-                "приготовить поесть",
+            TodoItem("a",
+                "Приготовить поесть",
                 Priority.LOW,
                 false,
                 Date(2023, 6, 1),
                 null,
                 null),
-            TodoItem("2",
-                "поесть",
+            TodoItem("b",
+                "Поесть",
                 Priority.MEDIUM,
                 true,
                 Date(2023, 6, 1),
                 null,
                 null),
-            TodoItem("3",
+            TodoItem("c",
                 "Суперультрамегаважное дело, очень сильно нереально важное дело, просто катастрофически, я бы даже сказал кошмарно важное-преважное международной важности дело ",
                 Priority.MEDIUM,
                 false,
                 Date(2023, 6, 1),
-                null,
+                Date(2023, 10, 12),
                 null),
-            TodoItem("4",
-                "посмотреть телик",
+            TodoItem("d",
+                "Посмотреть телик",
                 Priority.HIGH,
                 true,
-                Date(2023, 6, 1),
+                Date(2023, 5, 12),
                 null,
                 null),
-            TodoItem("5",
+            TodoItem("e",
                 "забрать 30 кг бетона",
                 Priority.HIGH,
                 true,
-                Date(2023, 6, 1),
+                Date(2023, 3, 14),
                 null,
                 null),
-            TodoItem("6",
+            TodoItem("f",
                 "поспать жоска",
                 Priority.LOW,
                 false,
-                Date(2023, 6, 1),
+                Date(2022, 1, 2),
                 null,
                 null),
-            TodoItem("7",
+            TodoItem("j",
                 "купить что-нить",
                 Priority.LOW,
                 true,
-                Date(2023, 6, 1),
+                Date(2022, 12, 17),
                 null,
                 null),
 
@@ -75,5 +76,5 @@ class TodoRepository {
         val itemToGet = items.find { it.id == id }
         return itemToGet
     }
-    fun getTodoItems(context : Context) : List<TodoItem> = items
+    fun getTodoItems() : List<TodoItem> = items
 }
