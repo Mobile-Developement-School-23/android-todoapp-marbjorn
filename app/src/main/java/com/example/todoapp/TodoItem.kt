@@ -6,11 +6,11 @@ enum class Priority {
     LOW, MEDIUM, HIGH
 }
 
-data class TodoItem(val id : String,
-                    val text : String,
-                    val priority: Priority,
-                    val isDone : Boolean,
-                    val creationDate: Date,
-                    val deadlineDate: Date?,
-                    val changeDate: Date?
+data class TodoItem(var id : String,
+                    var text : String,
+                    var priority: Priority = Priority.MEDIUM,
+                    var isDone : Boolean = false,
+                    var creationDate: Date,
+                    var deadlineDate: Date? = null,
+                    var changeDate: Date? = null
                     )

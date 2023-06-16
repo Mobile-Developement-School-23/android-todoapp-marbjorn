@@ -13,15 +13,23 @@ import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.createViewModelLazy
+import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.example.todoapp.databinding.FragmentAddTaskBinding
 import java.util.*
+import kotlin.properties.Delegates
+import kotlin.random.Random
 
 class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
     private val calendar : Calendar = Calendar.getInstance()
-    private val formatter = SimpleDateFormat("dd MMMM yyyy", Locale.US)
+    private val formatter = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
     private lateinit var binding: FragmentAddTaskBinding
+    private var currentTodoItem: TodoItem? = null
+    private val args: AddTaskFragmentArgs by navArgs()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,25 +38,62 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val menu = initializeMenu()
+        menu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.item_high -> {
+                    setPriorityInView(Priority.HIGH)
+                    currentTodoItem?.priority = Priority.HIGH
+                }
+                R.id.item_medium -> {
+                    setPriorityInView(Priority.MEDIUM)
+                    currentTodoItem?.priority = Priority.MEDIUM
+                }
+                R.id.item_low -> {
+                    setPriorityInView(Priority.LOW)
+                    currentTodoItem?.priority = Priority.LOW
+                }
+            }
+            false
+        }
+
+        val idToModify : String? = args.todoItemId
+        var todoItem : TodoItem? = idToModify?.let { MAIN.repo.getTodoItem(it) }
+
+        if (idToModify == null) {
+            currentTodoItem = TodoItem(
+                id = Random(100).nextInt().toString(),
+                text = "",
+                creationDate = calendar.time
+            )
+        }
+        else {
+            currentTodoItem = todoItem?.copy()
+        }
+
+        if (idToModify != null) currentTodoItem = MAIN.repo.getTodoItem(idToModify)
+        currentTodoItem?.let { initializeViews(it) }
+
         binding.apply {
             btnDelete.setOnClickListener {
+                if (idToModify != null) {
+                    MAIN.repo.deleteTodoItem(idToModify)
+                }
                 findNavController().navigate(R.id.action_addTaskFragment_to_todoListFragment)
             }
 
             btnSave.setOnClickListener {
-                val todoItem = TodoItem(
-                    "aaa",
-                    binding.etTodo.text.toString(),
-                    Priority.MEDIUM,
-                    false,
-                    Date(10, 11, 12),
-                    null,
-                    null
-                )
-                MAIN.repo.addTodoItem(todoItem)
+                currentTodoItem?.text = etTodo.text.toString()
+                if (todoItem == null) {
+                    currentTodoItem?.let { it1 -> MAIN.repo.addTodoItem(it1) }
+                } else if (!currentTodoItem?.let { it1 -> compareTodoItems(it1, todoItem!!) }!!) {
+                    currentTodoItem?.changeDate = Calendar.getInstance().time
+                    todoItem = currentTodoItem?.copy()
+                }
                 findNavController().navigate(R.id.action_addTaskFragment_to_todoListFragment)
             }
 
@@ -59,29 +104,47 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             llImportance.setOnClickListener {
                 menu.show()
             }
+
         }
-        menu.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.item_high -> binding.tvCurrentPriority.text = getString(R.string.high_priority)
-                R.id.item_medium -> binding.tvCurrentPriority.text =
-                    getString(R.string.medium_priority)
-                R.id.item_low -> binding.tvCurrentPriority.text = getString(R.string.low_priority)
+
+            binding.swDate.setOnClickListener {
+                if (binding.swDate.isChecked) {
+                    DatePickerDialog(
+                        this.requireContext(),
+                        this,
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)
+                    ).show()
+
+                } else {
+                    currentTodoItem?.deadlineDate = null
+                    binding.tvCurrentDate.text = "Не выбрано"
+                }
             }
-            false
+    }
+
+    fun setPriorityInView(priority: Priority) = with(binding) {
+        tvCurrentPriority.text = getString(R.string.high_priority)
+        when (priority) {
+            Priority.HIGH -> tvCurrentPriority.text = getString(R.string.high_priority)
+            Priority.MEDIUM -> tvCurrentPriority.text = getString(R.string.medium_priority)
+            Priority.LOW -> tvCurrentPriority.text = getString(R.string.low_priority)
         }
-        binding.swDate.setOnCheckedChangeListener { _, _ ->
-            if (binding.swDate.isChecked) {
-                DatePickerDialog(this.requireContext(),
-                    this,
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)
-                ).show()
-            }
-            else {
-                binding.tvCurrentDate.text = "Не выбрано"
-            }
+    }
+
+    fun initializeViews(todoItem: TodoItem) = with (binding) {
+        etTodo.setText(todoItem.text)
+        setPriorityInView(todoItem.priority)
+
+        if (currentTodoItem?.deadlineDate == null ) swDate.isChecked = false
+        else swDate.isChecked = true
+
+        var str : String = "Не выбрано"
+        if (currentTodoItem?.deadlineDate != null) {
+            str = formatter.format(currentTodoItem?.deadlineDate?.time)
         }
+        tvCurrentDate.text = str
     }
 
     fun initializeMenu(): PopupMenu {
@@ -103,7 +166,17 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
     override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
         calendar.set(p1, p2, p3)
+
         val str : String = formatter.format(calendar.timeInMillis)
         binding.tvCurrentDate.text = str
+        currentTodoItem?.deadlineDate = calendar.time
+    }
+
+    fun compareTodoItems( td1 : TodoItem, td2 : TodoItem) : Boolean {
+        return (td1.id == td2.id &&
+                td1.text == td2.text &&
+                td1.priority == td2.priority &&
+                td1.deadlineDate == td2.deadlineDate &&
+                td1.creationDate == td2.creationDate)
     }
 }

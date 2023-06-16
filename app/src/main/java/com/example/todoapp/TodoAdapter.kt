@@ -1,11 +1,14 @@
 package com.example.todoapp
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 
-class TodoAdapter : RecyclerView.Adapter<TodoViewHolder>() {
+class TodoAdapter(fragmentView : View) : RecyclerView.Adapter<TodoViewHolder>() {
 
+    private var view: View = fragmentView
     var todoItems = listOf<TodoItem>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
@@ -21,5 +24,9 @@ class TodoAdapter : RecyclerView.Adapter<TodoViewHolder>() {
 
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.onBind(todoItems[position])
+        holder.info.setOnClickListener {
+            val directions = TodoListFragmentDirections.actionTodoListFragmentToAddTaskFragment(todoItemId = todoItems[position].id)
+            Navigation.findNavController(view).navigate(directions)
+        }
     }
 }

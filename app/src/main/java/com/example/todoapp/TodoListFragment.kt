@@ -27,11 +27,11 @@ class TodoListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnAdd.setOnClickListener {
-            findNavController().navigate(R.id.action_todoListFragment_to_addTaskFragment)
+            val directions = TodoListFragmentDirections.actionTodoListFragmentToAddTaskFragment(todoItemId = null)
+            findNavController().navigate(directions)
         }
-        adapter = TodoAdapter()
+        adapter = TodoAdapter(view)
         recyclerView = binding.rvTodolist
-
         recyclerView.adapter = adapter
         val layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false);
         recyclerView.layoutManager = layoutManager

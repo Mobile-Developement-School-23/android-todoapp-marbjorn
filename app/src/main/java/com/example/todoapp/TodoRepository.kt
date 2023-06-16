@@ -66,6 +66,14 @@ class TodoRepository {
         items.add(item)
     }
 
+    fun deleteTodoItem ( id : String) {
+        val itemToDelete = items.find { it.id == id }
+        items.remove(itemToDelete)
+    }
 
+    fun getTodoItem( id : String ) : TodoItem? {
+        val itemToGet = items.find { it.id == id }
+        return itemToGet
+    }
     fun getTodoItems(context : Context) : List<TodoItem> = items
 }

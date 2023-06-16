@@ -41,19 +41,11 @@
             android:id="@+id/et_todo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minLines="2"
+            android:minLines="4"
             android:gravity="top"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
-    <Button
-        android:id="@+id/btn_ok"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ок"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <LinearLayout
         android:id="@+id/ll_importance"
