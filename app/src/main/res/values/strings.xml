@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">ToDo App</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="priority_high">Высокий</string>
+    <string name="priority_low">Низкий</string>
+    <string name="priority_common">Нет</string>
+    <string name="todo_edit_hint">Что я должен сделать?</string>
+    <string name="importance">Важность</string>
+    <string name="no_importance">Нет важности</string>
+    <string name="date">Сделать до</string>
+    <string name="deadline_not_selected">Не выбрано</string>
+    <string name="delete">Удалить</string>
+    <string name="save">Сохранить</string>
+
+</resources>
