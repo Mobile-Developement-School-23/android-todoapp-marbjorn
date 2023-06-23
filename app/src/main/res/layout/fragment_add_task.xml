@@ -1,166 +1,216 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".AddTaskFragment">
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_save"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:text="@string/save"
-        android:textColor="@color/color_light_blue"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-
-
-        />
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textLayout_todo"
+    tools:context=".AddTaskFragment"
+    >
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/btn_save"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:hint="@string/todo_edit_hint"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_height="?actionBarSize">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@android:color/transparent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:text="@string/save"
+                    android:textSize="16sp"
+
+
+                    android:textColor="@color/color_light_blue" />
+                <ImageButton
+                    android:id="@+id/ib_cancel"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/round_close_24"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
         >
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_todo"
+
+<!--        <com.google.android.material.button.MaterialButton-->
+<!--            android:id="@+id/btn_save"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:text="@string/save"-->
+<!--            android:textColor="@color/color_light_blue"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            android:layout_marginEnd="10dp"-->
+<!--            android:layout_marginTop="10dp"-->
+
+
+<!--            />-->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textLayout_todo"
+            android:layout_width="match_parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="@string/todo_edit_hint"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_todo"
+                android:inputType="none"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minLines="4"
+                android:gravity="top"
+
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+        <LinearLayout
+            android:id="@+id/ll_importance"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minLines="4"
-            android:gravity="top"
-
-            />
-
-    </com.google.android.material.textfield.TextInputLayout>
-    <LinearLayout
-        android:id="@+id/ll_importance"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textLayout_todo"
-        android:orientation="vertical"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        >
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/importance"
-            android:textSize="19sp"
-            android:id="@+id/tv_importance"
-            android:textStyle="bold"
-            />
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_current_priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_importance"
-            />
-
-    </LinearLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/cl_time"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/div1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        >
-
-        <com.google.android.material.switchmaterial.SwitchMaterial
-            android:layout_width="wrap_content"
-            android:id="@+id/sw_date"
-            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="10dp"/>
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_date"
+            app:layout_constraintTop_toBottomOf="@id/textLayout_todo"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            >
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/importance"
+                android:textSize="19sp"
+                android:id="@+id/tv_importance"
+                android:textStyle="bold"
+                />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_current_priority"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/no_importance"
+                />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/div1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            >
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:layout_width="wrap_content"
+                android:id="@+id/sw_date"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginEnd="10dp"/>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/date"
+                android:textSize="19sp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/tv_current_date"/>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_current_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/deadline_not_selected"
+                app:layout_constraintTop_toBottomOf="@id/tv_date"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:textColor="@color/color_light_blue"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/div1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/ll_importance"
+            android:layout_marginTop="10dp"
+            />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:id="@+id/div2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/cl_time"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/date"
-            android:textSize="19sp"
-            app:layout_constraintTop_toTopOf="parent"
+            android:background="@android:color/transparent"
+            android:textColor="@color/color_light_red"
+            app:layout_constraintTop_toBottomOf="@id/div2"
             app:layout_constraintStart_toStartOf="parent"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/tv_current_date"/>
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_current_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/deadline_not_selected"
-            app:layout_constraintTop_toBottomOf="@id/tv_date"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:textColor="@color/color_light_blue"/>
+            android:text="@string/delete"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_marginEnd="10dp"
+            android:layout_marginTop="10dp"
+            android:drawableLeft="@drawable/baseline_delete_24"
+            android:layout_marginStart="10dp"
+            android:layout_marginVertical="10dp"
+
+
+            />
+<!--        <ImageButton-->
+<!--            android:id="@+id/ib_cancel"-->
+<!--            android:layout_width="30dp"-->
+<!--            android:layout_height="30dp"-->
+<!--            android:background="@drawable/round_close_24"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="@id/btn_save"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/btn_save"-->
+<!--            android:layout_marginStart="10dp"-->
+<!--            />-->
+
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/div1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/ll_importance"
-        android:layout_marginTop="10dp"
-        />
-
-    <com.google.android.material.divider.MaterialDivider
-        android:id="@+id/div2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/cl_time"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
-        />
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:textColor="@color/color_light_red"
-        app:layout_constraintTop_toBottomOf="@id/div2"
-        app:layout_constraintStart_toStartOf="parent"
-        android:text="@string/delete"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp"
-        android:drawableLeft="@drawable/baseline_delete_24"
-        android:layout_marginStart="10dp"
-        android:layout_marginVertical="10dp"
-
-
-        />
-    <ImageButton
-        android:id="@+id/ib_cancel"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@drawable/round_close_24"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/btn_save"
-        app:layout_constraintBottom_toBottomOf="@id/btn_save"
-        android:layout_marginStart="10dp"
-        />
-
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

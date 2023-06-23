@@ -1,6 +1,7 @@
 package com.example.todoapp
 
 import android.app.DatePickerDialog
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.text.SpannableString
@@ -9,10 +10,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.DatePicker
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.createViewModelLazy
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavArgs
