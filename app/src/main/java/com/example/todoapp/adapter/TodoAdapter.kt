@@ -1,16 +1,20 @@
-package com.example.todoapp
+package com.example.todoapp.adapter
 
 import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.Navigation
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todoapp.MAIN
+import com.example.todoapp.storage.Priority
+import com.example.todoapp.R
+import com.example.todoapp.storage.TodoItem
 import com.example.todoapp.databinding.TaskItemBinding
+import com.example.todoapp.fragments.TodoListFragmentDirections
+import com.example.todoapp.storage.TodoRepository
 
 class TodoAdapter(val fragmentView : View) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 
@@ -49,7 +53,7 @@ class TodoAdapter(val fragmentView : View) : RecyclerView.Adapter<TodoAdapter.To
         }
     }
 
-    var todoItems = MAIN.repo.getTodoItems()
+    var todoItems = TodoRepository.getTodoItems()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
 
@@ -62,7 +66,8 @@ class TodoAdapter(val fragmentView : View) : RecyclerView.Adapter<TodoAdapter.To
     override fun onBindViewHolder(holder: TodoViewHolder, position: Int) {
         holder.onBind(todoItems[position])
         holder.binding.ivInfo.setOnClickListener {
-            val directions = TodoListFragmentDirections.actionTodoListFragmentToAddTaskFragment(todoItemId = todoItems[position].id)
+            val directions =
+                TodoListFragmentDirections.actionTodoListFragmentToAddTaskFragment(todoItemId = todoItems[position].id)
             Navigation.findNavController(fragmentView).navigate(directions)
         }
     }
