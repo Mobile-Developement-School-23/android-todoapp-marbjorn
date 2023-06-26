@@ -1,7 +1,6 @@
-package com.example.todoapp
+package com.example.todoapp.fragments
 
 import android.app.DatePickerDialog
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.text.SpannableString
@@ -10,20 +9,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.DatePicker
-import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
-import androidx.fragment.app.createViewModelLazy
-import androidx.fragment.app.viewModels
-import androidx.navigation.NavArgs
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.example.todoapp.storage.Priority
+import com.example.todoapp.R
+import com.example.todoapp.storage.TodoItem
 import com.example.todoapp.databinding.FragmentAddTaskBinding
+import com.example.todoapp.storage.TodoRepository
 import java.util.*
-import kotlin.properties.Delegates
 import kotlin.random.Random
 
 class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
@@ -46,6 +42,7 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //initViewModel()
         val menu = initializeMenu()
         menu.setOnMenuItemClickListener {
             when (it.itemId) {
@@ -66,7 +63,7 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         }
 
         val idToModify : String? = args.todoItemId
-        var todoItem : TodoItem? = idToModify?.let { MAIN.repo.getTodoItem(it) }
+        var todoItem : TodoItem? = idToModify?.let { TodoRepository.getTodoItem(it) }
 
         if (idToModify == null) {
             currentTodoItem = TodoItem(
@@ -79,13 +76,13 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             currentTodoItem = todoItem?.copy()
         }
 
-        if (idToModify != null) currentTodoItem = MAIN.repo.getTodoItem(idToModify)
+        if (idToModify != null) currentTodoItem = TodoRepository.getTodoItem(idToModify)
         currentTodoItem?.let { initializeViews(it) }
 
         binding.apply {
             btnDelete.setOnClickListener {
                 if (idToModify != null) {
-                    MAIN.repo.deleteTodoItem(idToModify)
+                    TodoRepository.deleteTodoItem(idToModify)
                 }
                 findNavController().navigate(R.id.action_addTaskFragment_to_todoListFragment)
             }
@@ -93,7 +90,7 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             btnSave.setOnClickListener {
                 currentTodoItem?.text = etTodo.text.toString()
                 if (todoItem == null) {
-                    currentTodoItem?.let { it1 -> MAIN.repo.addTodoItem(it1) }
+                    currentTodoItem?.let { it1 -> TodoRepository.addTodoItem(it1) }
                 } else if (!currentTodoItem?.let { it1 -> compareTodoItems(it1, todoItem!!) }!!) {
                     currentTodoItem?.changeDate = Calendar.getInstance().time
                     todoItem = currentTodoItem?.copy()
@@ -175,7 +172,7 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         currentTodoItem?.deadlineDate = calendar.time
     }
 
-    fun compareTodoItems( td1 : TodoItem, td2 : TodoItem) : Boolean {
+    fun compareTodoItems(td1 : TodoItem, td2 : TodoItem) : Boolean {
         return (td1.id == td2.id &&
                 td1.text == td2.text &&
                 td1.priority == td2.priority &&
@@ -183,3 +180,5 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                 td1.creationDate == td2.creationDate)
     }
 }
+
+
