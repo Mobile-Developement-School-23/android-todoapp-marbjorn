@@ -18,7 +18,7 @@ import com.example.todoapp.storage.Priority
 import com.example.todoapp.R
 import com.example.todoapp.storage.TodoItem
 import com.example.todoapp.databinding.FragmentAddTaskBinding
-import com.example.todoapp.storage.TodoRepository
+import com.example.todoapp.repository.TodoRepository
 import java.util.*
 import kotlin.random.Random
 

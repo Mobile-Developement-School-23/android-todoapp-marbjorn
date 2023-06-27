@@ -8,13 +8,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
-import com.example.todoapp.MAIN
 import com.example.todoapp.storage.Priority
 import com.example.todoapp.R
 import com.example.todoapp.storage.TodoItem
 import com.example.todoapp.databinding.TaskItemBinding
 import com.example.todoapp.fragments.TodoListFragmentDirections
-import com.example.todoapp.storage.TodoRepository
+import com.example.todoapp.repository.TodoRepository
 
 class TodoAdapter(val fragmentView : View) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 

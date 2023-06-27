@@ -1,5 +1,6 @@
-package com.example.todoapp.storage
+package com.example.todoapp.repository
 
+import com.example.todoapp.storage.TodoItem
 import java.util.*
 
 
@@ -25,7 +26,7 @@ object TodoRepository {
     }
     fun getTodoItems() : List<TodoItem> = items
 }
-
+/*
 private val textList = mutableListOf(
     TodoItem("a",
         "Приготовить поесть",
@@ -77,4 +78,4 @@ private val textList = mutableListOf(
         null,
         null),
 
-    )
+    )*/
