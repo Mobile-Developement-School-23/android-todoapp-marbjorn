@@ -13,21 +13,21 @@ import com.example.todoapp.R
 import com.example.todoapp.storage.TodoItem
 import com.example.todoapp.databinding.TaskItemBinding
 import com.example.todoapp.fragments.TodoListFragmentDirections
-import com.example.todoapp.repository.TodoRepository
+import com.example.todoapp.storage.TodoItemData
 
 class TodoAdapter(val fragmentView : View) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
 
     class TodoViewHolder(val binding : TaskItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun onBind(todoItem : TodoItem) = with(binding){
-            cbDone.setChecked(todoItem.isDone)
+        fun onBind(todoItem : TodoItemData) = with(binding){
+            cbDone.setChecked(todoItem.done)
             tvText.text = todoItem.text
             strikeText(tvText)
 
             cbDone.setOnClickListener {
-                todoItem.isDone = cbDone.isChecked
+                todoItem.done = cbDone.isChecked
                 strikeText(tvText)
-            }
+            }/*
             when (todoItem.priority) {
                 Priority.HIGH -> {
                     cbDone.setButtonDrawable(R.drawable.custom_check_box_high_prioroty_selector)
@@ -39,7 +39,7 @@ class TodoAdapter(val fragmentView : View) : RecyclerView.Adapter<TodoAdapter.To
                 else -> {
                     ivPriority.visibility = ImageView.GONE
                 }
-            }
+            }*/
         }
 
         fun strikeText(tv : TextView) {
@@ -52,8 +52,12 @@ class TodoAdapter(val fragmentView : View) : RecyclerView.Adapter<TodoAdapter.To
         }
     }
 
-    var todoItems = TodoRepository.getTodoItems()
+    var todoItems = listOf<TodoItemData>()//TodoRepository.getTodoItems()
 
+    fun setList(list : List<TodoItemData>) {
+        todoItems = list
+        notifyDataSetChanged()
+    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
 
         val _binding = TaskItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)

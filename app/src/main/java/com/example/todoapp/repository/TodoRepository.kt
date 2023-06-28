@@ -1,14 +1,28 @@
 package com.example.todoapp.repository
 
-import com.example.todoapp.storage.TodoItem
-import java.util.*
+import androidx.lifecycle.LiveData
+import com.example.todoapp.storage.TodoItemData
 
 
+class TodoRepository(val taskDao : TaskDao) {
 
-object TodoRepository {
+    var lastRevision : Int = 0
+    suspend fun addItem(todoEntity: TodoItemData) = taskDao.addItem(todoEntity)
+
+    suspend fun update(todoEntity: TodoItemData) = taskDao.update(todoEntity)
+
+    suspend fun deleteAll() = taskDao.deleteAll()
+
+    suspend fun deleteItem(todoEntity: TodoItemData) = taskDao.deleteItem(todoEntity)
+
+    fun getAllTask() : LiveData<List<TodoItemData>> = taskDao.getAllTasks()
+
+
+}
+/*
+
     private var items : MutableList<TodoItem>
     init {
-        items = textList
     }
 
     fun addTodoItem( item : TodoItem) {
@@ -25,8 +39,8 @@ object TodoRepository {
         return itemToGet
     }
     fun getTodoItems() : List<TodoItem> = items
-}
-/*
+
+
 private val textList = mutableListOf(
     TodoItem("a",
         "Приготовить поесть",

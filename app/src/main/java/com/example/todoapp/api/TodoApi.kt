@@ -1,7 +1,6 @@
 package com.example.todoapp.api
 
-import com.example.todoapp.storage.TodoItem
-import retrofit2.Response
+import com.example.todoapp.storage.TodoListData
 import retrofit2.http.*
 
 
@@ -17,15 +16,15 @@ interface TodoApi {
 
     @POST("list") //post a TodoItem
     suspend fun addItem(@Header("X-Last-Known-Revision") revision : String,
-                        @Body todoItemResponseData: TodoItemResponseData ) : TodoItemResponseData
+                        @Body todoItemWrapper: TodoItemWrapper ) : TodoItemWrapper
 
     @GET("list/{id}") //get a TodoItem
-    suspend fun getItem(@Path("id") id : String) : TodoItemResponseData
+    suspend fun getItem(@Path("id") id : String) : TodoItemWrapper
 
     @PUT("list/{id}") //change a TodoItem
-    suspend fun changeItem(@Path("id") id : String, ) : TodoItemResponseData
+    suspend fun changeItem(@Path("id") id : String, ) : TodoItemWrapper
 
     @DELETE("list/{id}") //delete a TodoItem
     suspend fun deleteItem(@Header("X-Last-Known-Revision") revision : String,
-                           @Path("id") id : String) : TodoItemResponseData
+                           @Path("id") id : String) : TodoItemWrapper
 }

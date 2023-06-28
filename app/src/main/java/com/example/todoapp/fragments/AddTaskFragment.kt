@@ -18,7 +18,6 @@ import com.example.todoapp.storage.Priority
 import com.example.todoapp.R
 import com.example.todoapp.storage.TodoItem
 import com.example.todoapp.databinding.FragmentAddTaskBinding
-import com.example.todoapp.repository.TodoRepository
 import java.util.*
 import kotlin.random.Random
 
@@ -63,26 +62,26 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         }
 
         val idToModify : String? = args.todoItemId
-        var todoItem : TodoItem? = idToModify?.let { TodoRepository.getTodoItem(it) }
+        var todoItem : TodoItem? = null //idToModify?.let { TodoRepository.getTodoItem(it) }
 
         if (idToModify == null) {
             currentTodoItem = TodoItem(
                 id = Random(100).nextInt().toString(),
                 text = "",
-                creationDate = calendar.time
+                createdAt = calendar.time
             )
         }
         else {
             currentTodoItem = todoItem?.copy()
         }
 
-        if (idToModify != null) currentTodoItem = TodoRepository.getTodoItem(idToModify)
+        if (idToModify != null) currentTodoItem = null//TodoRepository.getTodoItem(idToModify)
         currentTodoItem?.let { initializeViews(it) }
 
         binding.apply {
             btnDelete.setOnClickListener {
                 if (idToModify != null) {
-                    TodoRepository.deleteTodoItem(idToModify)
+                //    TodoRepository.deleteTodoItem(idToModify)
                 }
                 findNavController().navigate(R.id.action_addTaskFragment_to_todoListFragment)
             }
@@ -90,9 +89,9 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             btnSave.setOnClickListener {
                 currentTodoItem?.text = etTodo.text.toString()
                 if (todoItem == null) {
-                    currentTodoItem?.let { it1 -> TodoRepository.addTodoItem(it1) }
+                    currentTodoItem?.let { it1 -> /*TodoRepository.addTodoItem(it1)*/ }
                 } else if (!currentTodoItem?.let { it1 -> compareTodoItems(it1, todoItem!!) }!!) {
-                    currentTodoItem?.changeDate = Calendar.getInstance().time
+                    currentTodoItem?.changedAt = Calendar.getInstance().time
                     todoItem = currentTodoItem?.copy()
                 }
                 findNavController().navigate(R.id.action_addTaskFragment_to_todoListFragment)
@@ -119,7 +118,7 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
                     ).show()
 
                 } else {
-                    currentTodoItem?.deadlineDate = null
+                    currentTodoItem?.deadline = null
                     binding.tvCurrentDate.text = "Не выбрано"
                 }
             }
@@ -137,12 +136,12 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         etTodo.setText(todoItem.text)
         setPriorityInView(todoItem.priority)
 
-        if (currentTodoItem?.deadlineDate == null ) swDate.isChecked = false
+        if (currentTodoItem?.deadline == null ) swDate.isChecked = false
         else swDate.isChecked = true
 
         var str : String = "Не выбрано"
-        if (currentTodoItem?.deadlineDate != null) {
-            str = formatter.format(currentTodoItem?.deadlineDate?.time)
+        if (currentTodoItem?.deadline != null) {
+            str = formatter.format(currentTodoItem?.deadline?.time)
         }
         tvCurrentDate.text = str
     }
@@ -169,15 +168,15 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
 
         val str : String = formatter.format(calendar.timeInMillis)
         binding.tvCurrentDate.text = str
-        currentTodoItem?.deadlineDate = calendar.time
+        currentTodoItem?.deadline = calendar.time
     }
 
     fun compareTodoItems(td1 : TodoItem, td2 : TodoItem) : Boolean {
         return (td1.id == td2.id &&
                 td1.text == td2.text &&
                 td1.priority == td2.priority &&
-                td1.deadlineDate == td2.deadlineDate &&
-                td1.creationDate == td2.creationDate)
+                td1.deadline == td2.deadline &&
+                td1.createdAt == td2.createdAt)
     }
 }
 

@@ -14,16 +14,18 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.todoapp.MainActivity
 import com.example.todoapp.fragments.TodoListFragmentDirections
 import com.example.todoapp.adapter.TodoAdapter
 import com.example.todoapp.databinding.FragmentTodoListBinding
+import com.example.todoapp.vm.TodoViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class TodoListFragment : Fragment() {
     private lateinit var binding: FragmentTodoListBinding
     private lateinit var adapter: TodoAdapter
     private lateinit var recyclerView: RecyclerView
-
+    private lateinit var viewModel : TodoViewModel
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,60 +37,29 @@ class TodoListFragment : Fragment() {
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //requestPermission()
+
+        viewModel = (activity as MainActivity).todoViewModel
         binding.btnAdd.setOnClickListener {
             val directions =
                 TodoListFragmentDirections.actionTodoListFragmentToAddTaskFragment(todoItemId = null)
             findNavController().navigate(directions)
         }
+
+        viewModel.tasks.observe(viewLifecycleOwner)
+        { newList ->
+            adapter.setList(newList)
+            //adapter.todoItems = newList
+        }
+
         adapter = TodoAdapter(view)
         recyclerView = binding.rvTodolist
         recyclerView.adapter = adapter
         val layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false);
         recyclerView.layoutManager = layoutManager
-    }
 
-    private fun requestPermission() {
-        when {
-            ContextCompat.checkSelfPermission(
-                this.requireContext(),
-                Manifest.permission.INTERNET
-            ) == PackageManager.PERMISSION_GRANTED -> {
-                Log.i("PERM", "granted")
-            }
-            ActivityCompat.shouldShowRequestPermissionRationale(
-                this.requireActivity(),
-                Manifest.permission.INTERNET
-            ) -> {
-                val bar = Snackbar.make(
-                    binding.root,
-                    "Permission Required",
-                    Snackbar.LENGTH_INDEFINITE)
-                bar.setAction("Ok") {
-                    requestPermissionListener.launch(
-                        Manifest.permission.INTERNET
-                    )
-                }
-                bar.show()
-            }
-            else -> {
-                requestPermissionListener.launch(
-                    Manifest.permission.INTERNET
-                )
-            }
-        }
-    }
 
-    private val requestPermissionListener = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) {
-            isGranted : Boolean ->
-        if (isGranted) {
-            Log.i("Permission: ", "Granted")
-        }
-        else {
-            Log.i("Permission: ", "Not granted")
-        }
+        //пробую обновить
+        //viewModel.updateDataFromServer()
     }
 }
 
