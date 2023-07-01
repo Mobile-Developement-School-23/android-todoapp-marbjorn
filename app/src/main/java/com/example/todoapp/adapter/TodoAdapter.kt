@@ -7,61 +7,32 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.Navigation
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.storage.Priority
 import com.example.todoapp.R
-import com.example.todoapp.storage.TodoItem
 import com.example.todoapp.databinding.TaskItemBinding
 import com.example.todoapp.fragments.TodoListFragmentDirections
 import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.vm.TodoViewModel
 
-class TodoAdapter(val fragmentView : View) : RecyclerView.Adapter<TodoAdapter.TodoViewHolder>() {
+class TodoAdapter(val fragmentView : View, val todoViewModel: TodoViewModel) : RecyclerView.Adapter<TodoViewHolder>() {
 
-    class TodoViewHolder(val binding : TaskItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun onBind(todoItem : TodoItemData) = with(binding){
-            cbDone.setChecked(todoItem.done)
-            tvText.text = todoItem.text
-            strikeText(tvText)
+    var todoItems = listOf<TodoItemData>()
 
-            cbDone.setOnClickListener {
-                todoItem.done = cbDone.isChecked
-                strikeText(tvText)
-            }/*
-            when (todoItem.priority) {
-                Priority.HIGH -> {
-                    cbDone.setButtonDrawable(R.drawable.custom_check_box_high_prioroty_selector)
-                    ivPriority.setImageResource(R.drawable.baseline_priority_high_24)
-                }
-                Priority.LOW -> {
-                    ivPriority.setImageResource(R.drawable.baseline_arrow_downward_24)
-                }
-                else -> {
-                    ivPriority.visibility = ImageView.GONE
-                }
-            }*/
-        }
+    fun setList(newList : List<TodoItemData>) {
+        val differUtil = DifferUtil(todoItems, newList)
+        val diffResult = DiffUtil.calculateDiff(differUtil)
+        todoItems = newList
+        diffResult.dispatchUpdatesTo(this)
 
-        fun strikeText(tv : TextView) {
-            if (binding.cbDone.isChecked) {
-                tv.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-            }
-            else {
-                tv.paintFlags = 0
-            }
-        }
-    }
 
-    var todoItems = listOf<TodoItemData>()//TodoRepository.getTodoItems()
-
-    fun setList(list : List<TodoItemData>) {
-        todoItems = list
-        notifyDataSetChanged()
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoViewHolder {
 
         val _binding = TaskItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return TodoViewHolder(_binding)
+        return TodoViewHolder(_binding, todoViewModel)
     }
 
     override fun getItemCount() = todoItems.size

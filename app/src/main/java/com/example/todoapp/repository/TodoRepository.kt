@@ -1,11 +1,18 @@
 package com.example.todoapp.repository
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.lifecycle.LiveData
+import com.example.todoapp.api.RetrofitInstance
+import com.example.todoapp.api.TodoItemWrapper
 import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.storage.TodoListData
 
 
 class TodoRepository(val taskDao : TaskDao) {
 
+    var REVISION : String = "REVISION"
     var lastRevision : Int = 0
     suspend fun addItem(todoEntity: TodoItemData) = taskDao.addItem(todoEntity)
 
@@ -18,78 +25,43 @@ class TodoRepository(val taskDao : TaskDao) {
     fun getAllTask() : LiveData<List<TodoItemData>> = taskDao.getAllTasks()
 
 
+    suspend fun postItem(todoEntity: TodoItemData) {
+        val wrapper = TodoItemWrapper(
+            status = "ok",
+            element = todoEntity,
+            revision = lastRevision
+        )
+
+    }
+
+    suspend fun patchItems() : LiveData<List<TodoItemData>> {
+        var list : List<TodoItemData>? = getAllTask().value
+        Log.e("SIZE", getAllTask().value?.size.toString())
+        if (list == null) {
+            list = listOf()
+        }
+        val todoListData = TodoListData(
+            list = list
+        )
+        val newList = RetrofitInstance.api.patchListOfItems(lastRevision.toString(), todoListData)
+        deleteAll()
+        Log.e("SIZE", newList.list.size.toString())
+        for (i in newList.list) {
+            addItem(i)
+        }
+        lastRevision = newList.revision!!
+        Log.e("SIZE", getAllTask().value?.size.toString())
+        return getAllTask()
+    }
+
+    suspend fun putItem(todoEntity: TodoItemData) {
+        val wrapper = TodoItemWrapper(
+            element = todoEntity,
+            revision = lastRevision
+        )
+
+    }
+
+
+
 }
-/*
-
-    private var items : MutableList<TodoItem>
-    init {
-    }
-
-    fun addTodoItem( item : TodoItem) {
-        items.add(item)
-    }
-
-    fun deleteTodoItem ( id : String) {
-        val itemToDelete = items.find { it.id == id }
-        items.remove(itemToDelete)
-    }
-
-    fun getTodoItem( id : String ) : TodoItem? {
-        val itemToGet = items.find { it.id == id }
-        return itemToGet
-    }
-    fun getTodoItems() : List<TodoItem> = items
-
-
-private val textList = mutableListOf(
-    TodoItem("a",
-        "Приготовить поесть",
-        Priority.LOW,
-        false,
-        Date(2023, 6, 1),
-        null,
-        null),
-    TodoItem("b",
-        "Поесть",
-        Priority.MEDIUM,
-        true,
-        Date(2023, 6, 1),
-        null,
-        null),
-    TodoItem("c",
-        "Суперультрамегаважное дело, очень сильно нереально важное дело, просто катастрофически, я бы даже сказал кошмарно важное-преважное международной важности дело ",
-        Priority.MEDIUM,
-        false,
-        Date(2023, 6, 1),
-        Date(2023, 10, 12),
-        null),
-    TodoItem("d",
-        "Посмотреть телик",
-        Priority.HIGH,
-        true,
-        Date(2023, 5, 12),
-        null,
-        null),
-    TodoItem("e",
-        "забрать 30 кг бетона",
-        Priority.HIGH,
-        true,
-        Date(2023, 3, 14),
-        null,
-        null),
-    TodoItem("f",
-        "поспать жоска",
-        Priority.LOW,
-        false,
-        Date(2022, 1, 2),
-        null,
-        null),
-    TodoItem("j",
-        "купить что-нить",
-        Priority.LOW,
-        true,
-        Date(2022, 12, 17),
-        null,
-        null),
-
-    )*/

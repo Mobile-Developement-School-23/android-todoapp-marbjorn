@@ -12,7 +12,7 @@ interface TodoApi {
     suspend fun getListOfItems() : TodoListData
 
     @PATCH("list") //update list
-    suspend fun patchListOfItems(@Header("X-Last-Known-Revision") revision : String) : TodoListData
+    suspend fun patchListOfItems(@Header("X-Last-Known-Revision") revision : String, @Body list : TodoListData) : TodoListData
 
     @POST("list") //post a TodoItem
     suspend fun addItem(@Header("X-Last-Known-Revision") revision : String,

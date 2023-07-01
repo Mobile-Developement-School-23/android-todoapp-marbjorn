@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.todoapp.storage.TodoItemData
@@ -16,7 +17,7 @@ interface TaskDao {
     @Delete
     suspend fun deleteItem(todoItemDB: TodoItemData )
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addItem(todoItemDB: TodoItemData )
 
     @Query("DELETE FROM task_table")

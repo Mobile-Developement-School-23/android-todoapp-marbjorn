@@ -30,14 +30,15 @@
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:layout_width="match_parent"
+                android:id="@+id/toolbar"
                 android:layout_height="?actionBarSize"
                 app:layout_collapseMode="pin"
                 app:subtitleTextColor="@color/white"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
-                app:menu="@menu/menu_totolist"
+                app:menu="@menu/menu_todolist"
                 android:layout_gravity="bottom"
                 app:subtitle="CollapsingToolbarLayout"
-                app:title="Subtitle"/>
+                app:title="My tasks"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>
