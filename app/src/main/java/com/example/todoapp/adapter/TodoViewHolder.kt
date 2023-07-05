@@ -1,6 +1,7 @@
 package com.example.todoapp.adapter
 
 import android.graphics.Paint
+import android.view.View.GONE
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -9,9 +10,9 @@ import com.example.todoapp.databinding.TaskItemBinding
 import com.example.todoapp.storage.Priority
 import com.example.todoapp.storage.TodoItemData
 import com.example.todoapp.vm.TodoViewModel
+import java.util.Calendar
 
-class TodoViewHolder(val binding : TaskItemBinding, val viewModel: TodoViewModel) : RecyclerView.ViewHolder(binding.root) {
-
+class TodoViewHolder(val binding : TaskItemBinding, val viewModel: TodoViewModel/*, val isDoneShown : Boolean*/) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(todoItem : TodoItemData) = with(binding){
             cbDone.setChecked(todoItem.done)
             tvText.text = todoItem.text
@@ -19,6 +20,7 @@ class TodoViewHolder(val binding : TaskItemBinding, val viewModel: TodoViewModel
 
             cbDone.setOnClickListener {
                 todoItem.done = cbDone.isChecked
+                todoItem.changedAt = Calendar.getInstance().timeInMillis/1000
                 strikeText(tvText)
                 viewModel.change(todoItem)
             }

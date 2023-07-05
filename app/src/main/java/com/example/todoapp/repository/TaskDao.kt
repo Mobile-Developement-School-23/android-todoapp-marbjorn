@@ -14,16 +14,21 @@ interface TaskDao {
     @Query("SELECT * FROM task_table ORDER BY changedAt DESC")
     fun getAllTasks() : LiveData<List<TodoItemData>>
 
+    @Query("SELECT * FROM task_table ORDER BY changedAt DESC")
+    fun getAllTasksAsList() : List<TodoItemData>
+
     @Delete
     suspend fun deleteItem(todoItemDB: TodoItemData )
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addItem(todoItemDB: TodoItemData )
+    suspend fun insertItem(todoItemDB: TodoItemData )
 
+    @Query("SELECT COUNT(*) FROM task_table")
+    suspend fun itemsCount() : Int
     @Query("DELETE FROM task_table")
     suspend fun deleteAll()
 
     @Update
-    suspend fun update(todoItemDB: TodoItemData )
+    suspend fun updateItem(todoItemDB: TodoItemData )
 
 }

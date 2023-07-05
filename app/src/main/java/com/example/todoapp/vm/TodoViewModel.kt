@@ -2,37 +2,40 @@ package com.example.todoapp.vm
 
 import android.app.Application
 import android.content.Context
-import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
-import com.example.todoapp.api.NetworkResponse
-import com.example.todoapp.api.RetrofitInstance
+import com.example.todoapp.Revision
+import com.example.todoapp.api.NetworkConnectivityObserver
 import com.example.todoapp.repository.TaskDatabase
 import com.example.todoapp.repository.TodoRepository
 import com.example.todoapp.storage.TodoItemData
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class TodoViewModel(private val application : Application) : AndroidViewModel(application) {
-    private val taskDao = TaskDatabase.getDatabase(application).taskDao()
-    private val repo : TodoRepository
 
-    lateinit var tasks : LiveData<List<TodoItemData>>
+    private var connectivityObserver = NetworkConnectivityObserver(application.applicationContext)
+
+    private val taskDao = TaskDatabase.getDatabase(application).taskDao()
+    val repo : TodoRepository
 
     init {
-        repo = TodoRepository(taskDao)
+        repo = TodoRepository(taskDao, application.applicationContext)
         if (hasInternetConnection()) {
-            viewModelScope.launch {
-                //repo.patchItems()
-            }
+            syncro()
         }
-        tasks = repo.getAllTask()
+        viewModelScope.launch {
+            var status = connectivityObserver.observe().collect()
+            Toast.makeText(application.applicationContext, status.toString(), Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun add(todoItemDB: TodoItemData) {
@@ -43,40 +46,30 @@ class TodoViewModel(private val application : Application) : AndroidViewModel(ap
 
     fun delete(todoItemDB: TodoItemData) {
         viewModelScope.launch {
-            repo.deleteItem(todoItemDB)
-        }
-    }
-
-    fun deleteAll() {
-        viewModelScope.launch {
-            repo.deleteAll()
+            repo.deleteItem(todoItemDB, hasInternetConnection())
         }
     }
 
     fun change(todoItemDB: TodoItemData) {
         viewModelScope.launch {
-            repo.update(todoItemDB)
+            repo.updateItem(todoItemDB, hasInternetConnection())
         }
     }
 
-    fun updateDataFromServer() {
-        if (hasInternetConnection()) {
-            viewModelScope.launch {
-                tasks = repo.patchItems()
-            }
-        }
-        else {
-            Log.e("API", "Нет интернета")
+    fun syncro() {
+        viewModelScope.launch {
+            val state = repo.syncItemsFromRemote()
+            Log.d("STATE", state.code.toString())
         }
     }
-
+/*
     fun getTodoItemById(id : String) : TodoItemData? {
         var item : TodoItemData? = null
         viewModelScope.launch {
             item = tasks.value?.filter { it.id == id }!!.toList()[0]
         }
         return item
-    }
+    }*/
 
     private fun hasInternetConnection(): Boolean {
         val connectivityManager = application.getSystemService(

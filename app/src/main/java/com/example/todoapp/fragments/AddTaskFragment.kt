@@ -5,6 +5,7 @@ import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -66,7 +67,7 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
         }
 
         val idToModify : String? = args.todoItemId
-        var todoItem : TodoItemData? = idToModify?.let { viewModel.getTodoItemById(idToModify) }
+        var todoItem : TodoItemData? = null //idToModify?.let { viewModel.getTodoItemById(idToModify) }
 
         if (idToModify == null) {
             currentTodoItem = TodoItemData(
@@ -81,13 +82,13 @@ class AddTaskFragment : Fragment(), DatePickerDialog.OnDateSetListener {
             currentTodoItem = todoItem?.copy()
         }
 
-        if (idToModify != null) currentTodoItem = viewModel.getTodoItemById(idToModify)
+        //if (idToModify != null) currentTodoItem = viewModel.getTodoItemById(idToModify)
         currentTodoItem?.let { initializeViews(it) }
 
         binding.apply {
             btnDelete.setOnClickListener {
                 if (idToModify != null) {
-                   viewModel.delete(viewModel.getTodoItemById(idToModify)!!)
+                   //viewModel.delete(viewModel.getTodoItemById(idToModify)!!)
                 }
                 findNavController().navigate(R.id.action_addTaskFragment_to_todoListFragment)
             }

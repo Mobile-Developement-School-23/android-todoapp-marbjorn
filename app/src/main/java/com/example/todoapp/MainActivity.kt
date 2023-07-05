@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
 
         CoroutineScope(Dispatchers.IO).launch {
-            //val todoList = RetrofitInstance.api.addItem("5", todoItemResponseData)
+            //val todoList = RetrofitInstance.api.insertItem("5", todoItemResponseData)
             //val todoList = RetrofitInstance.api.patchListOfItems("6")
             //val todoList = RetrofitInstance.api.getItem("2")
             val todoList = RetrofitInstance.api.deleteItem("6","2")
