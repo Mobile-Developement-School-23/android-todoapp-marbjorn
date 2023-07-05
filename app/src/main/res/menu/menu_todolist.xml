@@ -2,10 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/menu_main_setting"
+        android:id="@+id/menu_show_done"
         android:icon="@drawable/baseline_visibility_24"
         android:orderInCategory="100"
         app:showAsAction="always"
         android:actionLayout="@layout/fragment_todo_list"
+        android:onClick="onOptionsItemSelected"
         android:title="Show done"/>
 </menu>
