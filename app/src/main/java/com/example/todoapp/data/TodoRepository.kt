@@ -1,23 +1,23 @@
-package com.example.todoapp.repository
+package com.example.todoapp.data
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.todoapp.Revision
+import com.example.todoapp.SharedPrefs
 import com.example.todoapp.api.NetworkResponse
 import com.example.todoapp.api.RetrofitInstance
 import com.example.todoapp.api.TodoItemWrapper
 import com.example.todoapp.api.safeApiCall
+import com.example.todoapp.repository.State
 import com.example.todoapp.storage.TodoItemData
 import com.example.todoapp.storage.TodoListData
 
 class TodoRepository(val taskDao : TaskDao, context : Context) {
 
-
     private var _todoList : MutableLiveData<List<TodoItemData>>
     val todoList : LiveData<List<TodoItemData>>
-    private val prefs = Revision(context)
+    private val prefs = SharedPrefs(context)
 
     init {
         _todoList = MutableLiveData<List<TodoItemData>>(emptyList())
@@ -29,16 +29,18 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
         val response = safeApiCall { RetrofitInstance.api.getListOfItems() }
         when (response) {
             is NetworkResponse.Success -> {
-                deleteAll()
+                deleteAllLocal()
                 for (i in response.data.list) {
-                    addItem(i)
+                    addItemLocal(i)
                 }
+
+                getLocalTasks()
                 Log.d("Rewrite Success", response.toString())
                 return State.Success
             }
             is NetworkResponse.Error -> {
                 Log.d("Rewrite Network", response.toString())
-                return stateGenerator(response.code!!)
+                return State.stateGenerator(response.code!!)
             }
             else -> {
                 Log.d("Rewrite Error", response.toString())
@@ -60,16 +62,18 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
         when (response) {
             is NetworkResponse.Success -> {
                 prefs.setRevision(response.data.revision!!)
-                deleteAll()
+                deleteAllLocal()
                 for (i in response.data.list) {
-                    addItem(i)
+                    addItemLocal(i)
                 }
+
+                getLocalTasks()
                 Log.d("Sync Success", response.toString())
                 return State.Success
             }
             is NetworkResponse.Error -> {
                 Log.d("Sync Network Error", response.toString())
-                return stateGenerator(response.code!!)
+                return State.stateGenerator(response.code!!)
             }
             else -> {
                 Log.d("Sync Error", response.toString())
@@ -84,7 +88,9 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
             element = todoItem,
             revision = _revision
         )
-        addItem(todoItem)
+        todoItem.lastUpdatedBy = prefs.getDeviceId()!!
+        addItemLocal(todoItem)
+        getLocalTasks()
         if (hasInternetConntection) {
             val response = safeApiCall { RetrofitInstance.api.addItem(_revision, wrapper) }
             when (response) {
@@ -95,11 +101,11 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
                 }
                 is NetworkResponse.Error -> {
                     Log.d("AddItem Network Error", response.toString())
-                    return stateGenerator(response.code!!)
+                    return State.stateGenerator(response.code!!)
                 }
                 else -> {
                     Log.d("AddItem Error", response.toString())
-                    return stateGenerator(null)
+                    return State.stateGenerator(null)
                 }
             }
         }
@@ -110,7 +116,9 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
         val wrapper = TodoItemWrapper(
             element = todoItem
         )
-        addItem(todoItem)
+        todoItem.lastUpdatedBy = prefs.getDeviceId()!!
+        addItemLocal(todoItem)
+        getLocalTasks()
         if (hasInternetConnection) {
             val response = safeApiCall { RetrofitInstance.api.changeItem(prefs.getRevision(), todoItem.id, wrapper) }
             when (response) {
@@ -121,7 +129,8 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
                 }
                 is NetworkResponse.Error -> {
                     Log.d("UpdateItem Network Error", response.toString())
-                    return stateGenerator(response.code!!)
+                    Log.d("revision", prefs.getRevision().toString())
+                    return State.stateGenerator(response.code!!)
                 }
                 else -> {
                     Log.d("UpdateItem Error", response.toString())
@@ -133,29 +142,25 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
     }
 
     suspend fun deleteItem(todoItem: TodoItemData, hasInternetConnection: Boolean = false) : State {
-        val wrapper = TodoItemWrapper(
-            element = todoItem
-        )
-        deleteItem(todoItem)
-        if (hasInternetConnection) {
-            val response = safeApiCall { RetrofitInstance.api.deleteItem(prefs.getRevision(), todoItem.id) }
-            when (response) {
-                is NetworkResponse.Success -> {
-                    prefs.setRevision(response.data.revision!!)
-                    Log.d("UpdateItem Success", response.toString())
-                    return State.Success
-                }
-                is NetworkResponse.Error -> {
-                    Log.d("Sync Network Error", response.toString())
-                    return stateGenerator(response.code!!)
-                }
-                else -> {
-                    Log.d("UpdateItem Error", response.toString())
-                    return State.OtherProblem
-                }
+        deleteItemLocal(todoItem)
+        getLocalTasks()
+        if (!hasInternetConnection) return State.Success
+        val response = safeApiCall { RetrofitInstance.api.deleteItem(prefs.getRevision(), todoItem.id) }
+        when (response) {
+            is NetworkResponse.Success -> {
+                prefs.setRevision(response.data.revision!!)
+                Log.d("UpdateItem Success", response.toString())
+                return State.Success
+            }
+            is NetworkResponse.Error -> {
+                Log.d("Sync Network Error", response.toString())
+                return State.stateGenerator(response.code!!)
+            }
+            else -> {
+                Log.d("UpdateItem Error", response.toString())
+                return State.OtherProblem
             }
         }
-        return State.Success
     }
 
     fun checkRevision(localRevision: Int, remoteRevision: Int) : State = when(remoteRevision) {
@@ -172,10 +177,9 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
     fun getLocalTasks() {
         _todoList.value = taskDao.getAllTasksAsList()
     }
-    suspend fun addItem(todoEntity: TodoItemData) = taskDao.insertItem(todoEntity)
-    // suspend fun update(todoEntity: TodoItemData) = taskDao.updateItem(todoEntity)
+    suspend fun addItemLocal(todoEntity: TodoItemData) = taskDao.insertItem(todoEntity)
     suspend fun countId() : Int = taskDao.itemsCount()
-    suspend fun deleteAll() = taskDao.deleteAll()
-    suspend fun deleteItem(todoEntity: TodoItemData) = taskDao.deleteItem(todoEntity)
+    suspend fun deleteAllLocal() = taskDao.deleteAll()
+    suspend fun deleteItemLocal(todoEntity: TodoItemData) = taskDao.deleteItem(todoEntity)
 
 }

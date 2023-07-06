@@ -1,7 +1,6 @@
 package com.example.todoapp.adapter
 
 import android.graphics.Paint
-import android.view.View.GONE
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -12,15 +11,19 @@ import com.example.todoapp.storage.TodoItemData
 import com.example.todoapp.vm.TodoViewModel
 import java.util.Calendar
 
-class TodoViewHolder(val binding : TaskItemBinding, val viewModel: TodoViewModel/*, val isDoneShown : Boolean*/) : RecyclerView.ViewHolder(binding.root) {
+class TodoViewHolder(
+    val binding : TaskItemBinding,
+    private val viewModel: TodoViewModel
+    ) : RecyclerView.ViewHolder(binding.root) {
+
         fun onBind(todoItem : TodoItemData) = with(binding){
-            cbDone.setChecked(todoItem.done)
+            cbDone.isChecked = todoItem.done
             tvText.text = todoItem.text
             strikeText(tvText)
 
             cbDone.setOnClickListener {
                 todoItem.done = cbDone.isChecked
-                todoItem.changedAt = Calendar.getInstance().timeInMillis/1000
+                todoItem.changedAt = Calendar.getInstance().timeInMillis
                 strikeText(tvText)
                 viewModel.change(todoItem)
             }
@@ -38,12 +41,8 @@ class TodoViewHolder(val binding : TaskItemBinding, val viewModel: TodoViewModel
             }
         }
 
-        fun strikeText(tv : TextView) {
-            if (binding.cbDone.isChecked) {
-                tv.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
-            }
-            else {
-                tv.paintFlags = 0
-            }
+        private fun strikeText(tv : TextView) {
+            if (binding.cbDone.isChecked) tv.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
+            else tv.paintFlags = 0
         }
     }

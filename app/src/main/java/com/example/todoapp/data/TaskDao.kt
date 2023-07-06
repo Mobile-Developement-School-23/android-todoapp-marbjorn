@@ -1,4 +1,4 @@
-package com.example.todoapp.repository
+package com.example.todoapp.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

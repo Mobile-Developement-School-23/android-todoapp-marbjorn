@@ -23,51 +23,14 @@ class MainActivity : AppCompatActivity() {
     lateinit var todoRecyclerView: RecyclerView
     private lateinit var binding : ActivityMainBinding
     lateinit var navController: NavController
-    lateinit var todoViewModel : TodoViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
 
         setContentView(binding.root)
-        todoViewModel = ViewModelProvider(this, defaultViewModelProviderFactory).get(TodoViewModel::class.java)
         val navFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navFragment.navController
-
-
-/*
-        CoroutineScope(Dispatchers.IO).launch {
-            val todoList = RetrofitInstance.api.getListOfItems()
-            Log.e("API", todoList.list.size.toString())
-        }*/
-/*
-        val todo = TodoItemData(
-            id = "6",
-            text ="blabla",
-            importance = "important",
-            done = true,
-            createdAt = System.currentTimeMillis()/1000,
-            lastUpdatedBy = "1",
-            changedAt = System.currentTimeMillis()/1000
-        )
-
-        var todoItemWrapper = TodoItemWrapper(
-            status = "ok",
-            element = todo
-        )
-
-        val gson = GsonBuilder().setPrettyPrinting().create()
-        Log.e("API", gson.toJson(todoItemWrapper))
-
-
-        CoroutineScope(Dispatchers.IO).launch {
-            //val todoList = RetrofitInstance.api.insertItem("5", todoItemResponseData)
-            //val todoList = RetrofitInstance.api.patchListOfItems("6")
-            //val todoList = RetrofitInstance.api.getItem("2")
-            val todoList = RetrofitInstance.api.deleteItem("6","2")
-            //val todoList = RetrofitInstance.api.getItem("1")
-            Log.e("API", todoList.revision.toString())
-        }*/
     }
 
 }

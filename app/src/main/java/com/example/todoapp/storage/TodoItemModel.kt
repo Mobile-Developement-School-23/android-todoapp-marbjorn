@@ -1,13 +1,11 @@
 package com.example.todoapp.storage
 
 import android.os.Parcelable
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
-import java.util.Date
 
 
 enum class Priority {
@@ -15,17 +13,6 @@ enum class Priority {
     @SerializedName("basic") MEDIUM,
     @SerializedName("important") HIGH
 }
-/*
-data class TodoItem(var id : String,
-                    var text : String,
-                    var priority: Priority = Priority.MEDIUM,
-                    var done : Boolean = false,
-                    var createdAt: Date,
-                    var deadline: Date? = null,
-                    var changedAt: Date? = null
-                    )
-*/
-const val deviceId = "1"
 
 @Parcelize
 @Entity(tableName = "task_table")
@@ -39,7 +26,7 @@ data class TodoItemData(
     @SerializedName("color") var color : String? = null,
     @SerializedName("created_at") var createdAt : Long,
     @SerializedName("changed_at") var changedAt : Long,
-    @SerializedName("last_updated_by") var lastUpdatedBy : String = deviceId
+    @SerializedName("last_updated_by") var lastUpdatedBy : String = "1"
 ) : Parcelable
 
 

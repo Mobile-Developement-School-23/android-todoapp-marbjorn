@@ -1,12 +1,15 @@
 package com.example.todoapp.api
 
-import android.util.Log
 import com.example.todoapp.storage.TodoListData
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 
 interface TodoApi {
@@ -28,28 +31,23 @@ interface TodoApi {
     suspend fun getItem(@Path("id") id : String) : TodoItemWrapper
 
     @PUT("list/{id}") //change a TodoItem
-    suspend fun changeItem(@Header("X-Last-Known-Revision") revision: Int, @Path("id") id : String, @Body todoItemWrapper: TodoItemWrapper) : TodoItemWrapper
+    suspend fun changeItem(@Header("X-Last-Known-Revision") revision: Int,
+                           @Path("id") id : String,
+                           @Body todoItemWrapper: TodoItemWrapper) : TodoItemWrapper
 
     @DELETE("list/{id}") //delete a TodoItem
     suspend fun deleteItem(@Header("X-Last-Known-Revision") revision : Int,
                            @Path("id") id : String) : TodoItemWrapper
-
 }
 
-inline suspend fun <T> safeApiCall(apiCall: () -> T): NetworkResponse<T> {
+inline fun <T> safeApiCall(apiCall: () -> T): NetworkResponse<T> {
     return try {
         NetworkResponse.Success(apiCall.invoke())
-    } catch (throwable: Throwable) {
-        Log.d("ERROR", throwable.toString())
-        when (throwable) {
-            is HttpException -> {
-                val code = throwable.code()
-                val errorResponse = throwable.message()
+    } catch (e : HttpException) {
+                val code = e.code()
+                val errorResponse = e.message()
                 NetworkResponse.Error(code, errorResponse)
-            }
-            else -> {
-                NetworkResponse.Error(null, null)
-            }
-        }
+    } catch (_ : Exception) {
+        NetworkResponse.Error(null, null)
     }
 }

@@ -6,11 +6,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
-    const val BASEURL = "https://beta.mrdekk.ru/todobackend/"
-    //const val BASEURL = "https://eok2ml3k8whegye.m.pipedream.net/"
-    const val token = "hoosier"
+    private const val BASEURL = "https://beta.mrdekk.ru/todobackend/"
+    private const val token = "hoosier"
 
-    val client = OkHttpClient.Builder().addInterceptor { chain ->
+    private val client = OkHttpClient.Builder().addInterceptor { chain ->
             val newRequest: Request = chain.request().newBuilder()
                 .addHeader("Authorization", "Bearer $token")
                 .build()
