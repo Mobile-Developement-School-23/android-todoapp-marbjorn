@@ -5,9 +5,13 @@ import com.example.todoapp.data.SharedPrefs
 import com.example.todoapp.api.NetworkConnectivityObserver
 import com.example.todoapp.api.TodoApi
 import com.example.todoapp.api.TodoRetrofit
+import com.example.todoapp.data.NetworkWorker
+import com.example.todoapp.data.NetworkWorkerComponent
+import com.example.todoapp.data.PeriodicWorkRequestModule
 import com.example.todoapp.data.TaskDao
 import com.example.todoapp.data.TaskDatabase
 import com.example.todoapp.data.TodoRepository
+import com.example.todoapp.data.WorkManagerModule
 import com.example.todoapp.fragments.addtask.AddTaskFragmentViewComponent
 import com.example.todoapp.fragments.todolist.TodoListFragmentComponent
 import com.example.todoapp.vm.AddTaskModelFactory
@@ -30,6 +34,8 @@ interface ApplicationComponent {
     fun todoListFragmentComponent() : TodoListFragmentComponent.Factory
     fun addTaskFragmentViewComponent() : AddTaskFragmentViewComponent.Factory
 
+    fun workerComponent() : NetworkWorkerComponent.Factory
+
     @Component.Factory
     interface Factory {
         fun create(@BindsInstance context: Context): ApplicationComponent
@@ -40,8 +46,12 @@ interface ApplicationComponent {
     ConnectivityObserverModule::class,
     TodoRepositoryModule::class,
     RetrofitModule::class,
-    App::class],
-subcomponents = [TodoListFragmentComponent::class, AddTaskFragmentViewComponent::class])
+    App::class,
+    PeriodicWorkRequestModule::class,
+    WorkManagerModule::class],
+subcomponents = [TodoListFragmentComponent::class,
+    AddTaskFragmentViewComponent::class
+    ])
 class AppModule
 @Module
 class ConnectivityObserverModule {

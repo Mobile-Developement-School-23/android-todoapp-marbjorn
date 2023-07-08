@@ -40,7 +40,7 @@ class TodoRepository @Inject constructor(val taskDao: TaskDao,
             }
             is NetworkResponse.Error -> {
                 Log.d("Rewrite Network", response.toString())
-                return State.stateGenerator(response.code!!)
+                return State.stateGenerator(response.code)
             }
             else -> {
                 Log.d("Rewrite Error", response.toString())
@@ -72,7 +72,7 @@ class TodoRepository @Inject constructor(val taskDao: TaskDao,
             }
             is NetworkResponse.Error -> {
                 Log.d("Sync Network Error", response.toString())
-                return State.stateGenerator(response.code!!)
+                return State.stateGenerator(response.code)
             }
             else -> {
                 Log.d("Sync Error", response.toString())
@@ -100,7 +100,7 @@ class TodoRepository @Inject constructor(val taskDao: TaskDao,
                 }
                 is NetworkResponse.Error -> {
                     Log.d("AddItem Network Error", response.toString())
-                    return State.stateGenerator(response.code!!)
+                    return State.stateGenerator(response.code)
                 }
                 else -> {
                     Log.d("AddItem Error", response.toString())
@@ -129,7 +129,7 @@ class TodoRepository @Inject constructor(val taskDao: TaskDao,
                 is NetworkResponse.Error -> {
                     Log.d("UpdateItem Network Error", response.toString())
                     Log.d("revision", prefs.getRevision().toString())
-                    return State.stateGenerator(response.code!!)
+                    return State.stateGenerator(response.code)
                 }
                 else -> {
                     Log.d("UpdateItem Error", response.toString())
@@ -153,7 +153,7 @@ class TodoRepository @Inject constructor(val taskDao: TaskDao,
             }
             is NetworkResponse.Error -> {
                 Log.d("Sync Network Error", response.toString())
-                return State.stateGenerator(response.code!!)
+                return State.stateGenerator(response.code)
             }
             else -> {
                 Log.d("UpdateItem Error", response.toString())
