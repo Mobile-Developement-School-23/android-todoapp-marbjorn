@@ -1,6 +1,7 @@
 package com.example.todoapp.api
 
-import com.example.todoapp.storage.TodoListData
+import com.example.todoapp.model.TodoItemWrapper
+import com.example.todoapp.model.TodoListWrapper
 import retrofit2.HttpException
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -17,15 +18,17 @@ interface TodoApi {
     /*@Headers("X-Last-Known-Revision", "3")*/
 
     @GET("list") //get list of TodoItems
-    suspend fun getListOfItems() : TodoListData // TodoListData
+    suspend fun getListOfItems() : TodoListWrapper // TodoListData
 
     @PATCH("list") //compare list
     suspend fun patchListOfItems(@Header("X-Last-Known-Revision") revision : Int,
-                                 @Body list : TodoListData) : TodoListData //: TodoListData
+                                 @Body list : TodoListWrapper
+    ) : TodoListWrapper //: TodoListData
 
     @POST("list") //post a TodoItem
     suspend fun addItem(@Header("X-Last-Known-Revision") revision: Int,
-                        @Body todoItemWrapper: TodoItemWrapper ) : TodoItemWrapper
+                        @Body todoItemWrapper: TodoItemWrapper
+    ) : TodoItemWrapper
 
     @GET("list/{id}") //get a TodoItem
     suspend fun getItem(@Path("id") id : String) : TodoItemWrapper
@@ -33,7 +36,8 @@ interface TodoApi {
     @PUT("list/{id}") //change a TodoItem
     suspend fun changeItem(@Header("X-Last-Known-Revision") revision: Int,
                            @Path("id") id : String,
-                           @Body todoItemWrapper: TodoItemWrapper) : TodoItemWrapper
+                           @Body todoItemWrapper: TodoItemWrapper
+    ) : TodoItemWrapper
 
     @DELETE("list/{id}") //delete a TodoItem
     suspend fun deleteItem(@Header("X-Last-Known-Revision") revision : Int,

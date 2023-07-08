@@ -7,7 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.model.TodoItemData
 
 @Dao
 interface TaskDao {
@@ -18,10 +18,10 @@ interface TaskDao {
     fun getAllTasksAsList() : List<TodoItemData>
 
     @Delete
-    suspend fun deleteItem(todoItemDB: TodoItemData )
+    suspend fun deleteItem(todoItemDB: TodoItemData)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertItem(todoItemDB: TodoItemData )
+    suspend fun insertItem(todoItemDB: TodoItemData)
 
     @Query("SELECT COUNT(*) FROM task_table")
     suspend fun itemsCount() : Int
@@ -29,6 +29,6 @@ interface TaskDao {
     suspend fun deleteAll()
 
     @Update
-    suspend fun updateItem(todoItemDB: TodoItemData )
+    suspend fun updateItem(todoItemDB: TodoItemData)
 
 }

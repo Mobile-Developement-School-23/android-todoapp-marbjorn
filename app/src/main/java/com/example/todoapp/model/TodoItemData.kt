@@ -1,4 +1,4 @@
-package com.example.todoapp.storage
+package com.example.todoapp.model
 
 import android.os.Parcelable
 import androidx.room.Entity
@@ -6,13 +6,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
-
-
-enum class Priority {
-    @SerializedName("low") LOW,
-    @SerializedName("basic") MEDIUM,
-    @SerializedName("important") HIGH
-}
 
 @Parcelize
 @Entity(tableName = "task_table")
@@ -28,10 +21,3 @@ data class TodoItemData(
     @SerializedName("changed_at") var changedAt : Long,
     @SerializedName("last_updated_by") var lastUpdatedBy : String = "1"
 ) : Parcelable
-
-
-data class TodoListData(
-    @SerializedName("status") var status : String = "ok",
-    @SerializedName("list") var list : List<TodoItemData>,
-    @SerializedName("revision") var revision : Int? = null
-)

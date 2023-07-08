@@ -2,18 +2,24 @@ package com.example.todoapp.fragments.todolist
 
 import androidx.lifecycle.LifecycleOwner
 import com.example.todoapp.databinding.FragmentTodoListBinding
+import dagger.BindsInstance
+import dagger.Subcomponent
+import javax.inject.Scope
 
-class TodoListFragmentViewComponent(
-    fragmentComponent: TodoListFragmentComponent,
-    binding: FragmentTodoListBinding,
-    lifecycleOwner: LifecycleOwner,
-) {
+@Scope
+annotation class TodoListViewScope
 
-    val todoListViewController = TodoListViewController(
-        fragmentComponent.fragment.requireActivity(),
-        binding,
-        fragmentComponent.adapter,
-        lifecycleOwner,
-        fragmentComponent.viewModel,
-    )
+@TodoListViewScope
+@Subcomponent
+interface TodoListFragmentViewComponent {
+    fun inject(todoViewController : TodoListViewController)
+    @Subcomponent.Factory
+    interface Factory {
+        fun create(
+            @BindsInstance binding: FragmentTodoListBinding,
+            @BindsInstance lifecycleOwner: LifecycleOwner
+        ) : TodoListFragmentViewComponent
+    }
+
+    val todoViewController : TodoListViewController
 }

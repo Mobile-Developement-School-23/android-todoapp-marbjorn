@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.todoapp.R
-import com.example.todoapp.storage.Priority
+import com.example.todoapp.model.Priority
 
 class MenuManager(private val context : Context,
                   initialPriority: Priority,

@@ -6,8 +6,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import com.example.todoapp.databinding.TaskItemBinding
-import com.example.todoapp.storage.Priority
-import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.model.Priority
+import com.example.todoapp.model.TodoItemData
 import com.example.todoapp.vm.TodoViewModel
 import java.util.Calendar
 

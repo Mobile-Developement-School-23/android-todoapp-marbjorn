@@ -1,7 +1,7 @@
-package com.example.todoapp.repository
+package com.example.todoapp.model
 
 import androidx.room.TypeConverter
-import com.example.todoapp.storage.Priority
+import com.example.todoapp.model.Priority
 
 class PriorityConverter {
     @TypeConverter

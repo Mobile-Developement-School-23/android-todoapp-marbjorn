@@ -5,8 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.todoapp.repository.PriorityConverter
-import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.model.PriorityConverter
+import com.example.todoapp.model.TodoItemData
 
 @Database(entities = [TodoItemData::class], version = 1, exportSchema = false)
 @TypeConverters(PriorityConverter::class)

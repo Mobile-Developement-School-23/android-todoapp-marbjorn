@@ -4,29 +4,29 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.todoapp.SharedPrefs
 import com.example.todoapp.api.NetworkResponse
-import com.example.todoapp.api.RetrofitInstance
-import com.example.todoapp.api.TodoItemWrapper
+import com.example.todoapp.api.TodoApi
+import com.example.todoapp.model.TodoItemWrapper
 import com.example.todoapp.api.safeApiCall
-import com.example.todoapp.repository.State
-import com.example.todoapp.storage.TodoItemData
-import com.example.todoapp.storage.TodoListData
+import com.example.todoapp.model.TodoItemData
+import com.example.todoapp.model.TodoListWrapper
+import javax.inject.Inject
 
-class TodoRepository(val taskDao : TaskDao, context : Context) {
+class TodoRepository @Inject constructor(val taskDao: TaskDao,
+                                         val prefs : SharedPrefs,
+                                         val api : TodoApi,
+                                         context : Context) {
 
     private var _todoList : MutableLiveData<List<TodoItemData>>
     val todoList : LiveData<List<TodoItemData>>
-    private val prefs = SharedPrefs(context)
 
     init {
         _todoList = MutableLiveData<List<TodoItemData>>(emptyList())
         todoList = _todoList
         getLocalTasks()
-
     }
     suspend fun rewriteItemsFromRemote() : State {
-        val response = safeApiCall { RetrofitInstance.api.getListOfItems() }
+        val response = safeApiCall { api.getListOfItems() }
         when (response) {
             is NetworkResponse.Success -> {
                 deleteAllLocal()
@@ -51,12 +51,12 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
 
     suspend fun syncItemsFromRemote() : State {
         val _revision = prefs.getRevision()
-        val listFromDb = TodoListData(
+        val listFromDb = TodoListWrapper(
             list = taskDao.getAllTasksAsList(),
             revision = _revision
         )
         val response = safeApiCall {
-            RetrofitInstance.api.patchListOfItems(_revision, listFromDb )
+            api.patchListOfItems(_revision, listFromDb )
         }
 
         when (response) {
@@ -66,7 +66,6 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
                 for (i in response.data.list) {
                     addItemLocal(i)
                 }
-
                 getLocalTasks()
                 Log.d("Sync Success", response.toString())
                 return State.Success
@@ -92,7 +91,7 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
         addItemLocal(todoItem)
         getLocalTasks()
         if (hasInternetConntection) {
-            val response = safeApiCall { RetrofitInstance.api.addItem(_revision, wrapper) }
+            val response = safeApiCall { api.addItem(_revision, wrapper) }
             when (response) {
                 is NetworkResponse.Success -> {
                     prefs.setRevision(response.data.revision!!)
@@ -120,7 +119,7 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
         addItemLocal(todoItem)
         getLocalTasks()
         if (hasInternetConnection) {
-            val response = safeApiCall { RetrofitInstance.api.changeItem(prefs.getRevision(), todoItem.id, wrapper) }
+            val response = safeApiCall { api.changeItem(prefs.getRevision(), todoItem.id, wrapper) }
             when (response) {
                 is NetworkResponse.Success -> {
                     prefs.setRevision(response.data.revision!!)
@@ -145,7 +144,7 @@ class TodoRepository(val taskDao : TaskDao, context : Context) {
         deleteItemLocal(todoItem)
         getLocalTasks()
         if (!hasInternetConnection) return State.Success
-        val response = safeApiCall { RetrofitInstance.api.deleteItem(prefs.getRevision(), todoItem.id) }
+        val response = safeApiCall { api.deleteItem(prefs.getRevision(), todoItem.id) }
         when (response) {
             is NetworkResponse.Success -> {
                 prefs.setRevision(response.data.revision!!)

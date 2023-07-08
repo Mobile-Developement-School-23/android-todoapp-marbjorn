@@ -1,13 +1,15 @@
 package com.example.todoapp.api
 
+import dagger.Module
+import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object RetrofitInstance {
-    private const val BASEURL = "https://beta.mrdekk.ru/todobackend/"
-    private const val token = "hoosier"
+class TodoRetrofit {
+    private val BASEURL = "https://beta.mrdekk.ru/todobackend/"
+    private val token = "hoosier"
 
     private val client = OkHttpClient.Builder().addInterceptor { chain ->
             val newRequest: Request = chain.request().newBuilder()
@@ -24,3 +26,4 @@ object RetrofitInstance {
             .build().create(TodoApi::class.java)
     }
 }
+

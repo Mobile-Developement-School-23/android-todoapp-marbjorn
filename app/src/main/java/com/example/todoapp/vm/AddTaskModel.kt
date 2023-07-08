@@ -5,14 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.api.NetworkConnectivityObserver
 import com.example.todoapp.data.TodoRepository
-import com.example.todoapp.storage.Priority
-import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.model.Priority
+import com.example.todoapp.model.TodoItemData
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AddTaskModel(
-    private var todoRepository: TodoRepository,
-    private var connectivityObserver: NetworkConnectivityObserver
-) : ViewModel() {
+class AddTaskModel @Inject constructor(
+    val todoRepository: TodoRepository,
+    val connectivityObserver: NetworkConnectivityObserver) : ViewModel() {
+
     var hasDeadline = MutableLiveData<Boolean>(false)
     var priority = MutableLiveData<Priority>(Priority.MEDIUM)
     var deadlineDate = MutableLiveData<Long?>(null)

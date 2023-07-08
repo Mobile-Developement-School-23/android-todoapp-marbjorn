@@ -1,6 +1,5 @@
 package com.example.todoapp.fragments.addtask
 
-import android.app.Activity
 import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.lifecycle.LifecycleOwner
@@ -9,21 +8,21 @@ import androidx.navigation.Navigation.findNavController
 import com.example.todoapp.R
 import com.example.todoapp.adapter.areTodoItemsEqual
 import com.example.todoapp.databinding.FragmentAddTaskBinding
-import com.example.todoapp.storage.Priority
-import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.model.Priority
+import com.example.todoapp.model.TodoItemData
 import com.example.todoapp.vm.AddTaskModel
 import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
+import javax.inject.Inject
 
-class AddTaskViewController  (
-    private val activity: Activity,
-    private val binding: FragmentAddTaskBinding,
-    private val args: AddTaskFragmentArgs,
-    private val viewModel: AddTaskModel,
-    private val lifecycleOwner: LifecycleOwner,
-){
-
+class AddTaskViewController @Inject constructor(
+    val fragment: AddTaskFragment,
+    val binding: FragmentAddTaskBinding,
+    val args: AddTaskFragmentArgs,
+    val viewModel: AddTaskModel,
+    val lifecycleOwner: LifecycleOwner,
+) {
     private var todoItemData: TodoItemData? = null
     init {
         Log.d("viewModelState", viewModel.priority.value.toString())
@@ -65,7 +64,7 @@ class AddTaskViewController  (
         setUpDate()
     }
     private fun setUpMenu() {
-        val menuManager = MenuManager(activity.applicationContext,
+        val menuManager = MenuManager(fragment.requireActivity().applicationContext,
             viewModel.priority.value!!,
             binding.llImportance,
             R.menu.menu_priority,
@@ -81,9 +80,9 @@ class AddTaskViewController  (
 
     private fun setPriorityInView(priority: Priority) = with(binding) {
         when (priority) {
-            Priority.HIGH -> tvCurrentPriority.text = activity.getText(R.string.priority_high)
-            Priority.MEDIUM -> tvCurrentPriority.text = activity.getText(R.string.priority_common)
-            Priority.LOW -> tvCurrentPriority.text = activity.getText(R.string.priority_low)
+            Priority.HIGH -> tvCurrentPriority.text = fragment.requireActivity().getText(R.string.priority_high)
+            Priority.MEDIUM -> tvCurrentPriority.text = fragment.requireActivity().getText(R.string.priority_common)
+            Priority.LOW -> tvCurrentPriority.text = fragment.requireActivity().getText(R.string.priority_low)
         }
     }
 
@@ -137,7 +136,7 @@ class AddTaskViewController  (
     }
 
     private fun setUpDate() = with(binding){
-        val dateManager = DatePickerManager(activity, viewModel.deadlineDate.value)
+        val dateManager = DatePickerManager(fragment.requireActivity(), viewModel.deadlineDate.value)
 
         viewModel.deadlineDate = dateManager.date
         viewModel.deadlineDate.observe(lifecycleOwner) {

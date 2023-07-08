@@ -2,27 +2,26 @@ package com.example.todoapp.vm
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.todoapp.api.NetworkConnectivityObserver
 import com.example.todoapp.data.TodoRepository
-import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.model.TodoItemData
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class TodoViewModel(
-    private val todoRepository: TodoRepository,
-    private val connectivityObserver : NetworkConnectivityObserver
-) : ViewModel() {
+class TodoViewModel @Inject constructor(
+    val todoRepository: TodoRepository,
+    val connectivityObserver: NetworkConnectivityObserver) : ViewModel() {
+
 
     val listOfItems : LiveData<List<TodoItemData>>
 
-    val lifedataMediator = MediatorLiveData<List<TodoItemData>>()
+    //val lifedataMediator = MediatorLiveData<List<TodoItemData>>()
     init {
-
+/*
         val observer = object : Observer<List<TodoItemData>>{
             override fun onChanged(value: List<TodoItemData>) {
                 Log.d("Observer", "Something changed")
@@ -32,9 +31,9 @@ class TodoViewModel(
 
         listOfItems = lifedataMediator as LiveData<List<TodoItemData>>
 
-        lifedataMediator.addSource(todoRepository.todoList, observer)
+        lifedataMediator.addSource(todoRepository.todoList, observer)*/
 
-        //listOfItems = todoRepository.todoList
+        listOfItems = todoRepository.todoList
 
         connectivityObserver.observe().onEach {
             //Toast.makeText(application.applicationContext, it.toString(), Toast.LENGTH_SHORT).show()

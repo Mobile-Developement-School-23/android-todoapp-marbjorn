@@ -1,10 +1,11 @@
-package com.example.todoapp
+package com.example.todoapp.data
 
 import android.content.Context
 import android.provider.Settings
 import java.util.UUID
+import javax.inject.Inject
 
-class SharedPrefs(context : Context) {
+class SharedPrefs @Inject constructor (context : Context) {
     private val lastRevisionTag = "REVISION"
     private val prefs = context.getSharedPreferences("data", Context.MODE_PRIVATE)
     private var editor = prefs.edit()
@@ -21,9 +22,7 @@ class SharedPrefs(context : Context) {
             editor.apply()
         }
     }
-
-    //private val deviceID = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
-    fun setRevision(revision : Int) {
+  fun setRevision(revision : Int) {
         editor.putInt(lastRevisionTag, revision)
         editor.apply()
     }

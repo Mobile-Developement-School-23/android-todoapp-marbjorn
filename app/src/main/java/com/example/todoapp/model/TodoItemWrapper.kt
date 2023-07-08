@@ -1,6 +1,5 @@
-package com.example.todoapp.api
+package com.example.todoapp.model
 
-import com.example.todoapp.storage.TodoItemData
 import com.google.gson.annotations.SerializedName
 
 data class TodoItemWrapper(

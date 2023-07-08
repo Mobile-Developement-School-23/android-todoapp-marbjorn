@@ -1,6 +1,8 @@
 package com.example.todoapp.fragments.addtask
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,8 +10,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.databinding.FragmentAddTaskBinding
-import com.example.todoapp.fragments.App
+import com.example.todoapp.app.App
+import com.example.todoapp.app.appComponent
 import com.example.todoapp.vm.AddTaskModel
+import com.example.todoapp.vm.AddTaskModelFactory
+import javax.inject.Inject
 
 class AddTaskFragment : Fragment() {
 
@@ -17,27 +22,25 @@ class AddTaskFragment : Fragment() {
     private val binding : FragmentAddTaskBinding
         get() = _binding!!
 
-    private val applicationComponent
-        get() = App.get(requireContext()).applicationComponent
-
-    private var fragmentViewComponent : AddTaskFragmentViewComponent? = null
+    var fragmentViewComponent : AddTaskFragmentViewComponent? = null
 
     private val args : AddTaskFragmentArgs by navArgs()
 
-    private val viewModel: AddTaskModel by viewModels{ applicationComponent.viewModelFactory }
+    private val viewModel: AddTaskModel by viewModels {
+       requireContext().appComponent.addTaskFactory()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentAddTaskBinding.inflate(inflater, container, false)
-
-        fragmentViewComponent = AddTaskFragmentViewComponent(
+        fragmentViewComponent = requireContext().appComponent.addTaskFragmentViewComponent().create(
             this,
-            binding,
             args,
-            viewModel,
-            viewLifecycleOwner
+            binding,
+            viewLifecycleOwner,
+            viewModel
         ).apply {
             addTaskViewController.initLifeDataForChange()
         }

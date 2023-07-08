@@ -1,14 +1,17 @@
 package com.example.todoapp.api
 
+import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.util.Log
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 interface ConnectivityObserver {
     fun observe() : Flow<Status>
@@ -17,7 +20,7 @@ interface ConnectivityObserver {
     }
 }
 
-class NetworkConnectivityObserver(context : Context) : ConnectivityObserver {
+class NetworkConnectivityObserver @Inject constructor(context : Context) : ConnectivityObserver {
 
     private val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
