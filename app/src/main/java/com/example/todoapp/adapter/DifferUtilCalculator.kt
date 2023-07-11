@@ -1,11 +1,12 @@
 package com.example.todoapp.adapter
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.model.TodoItemData
 
-class DifferUtil(private val oldList : List<TodoItemData>,
-                 private val newList : List<TodoItemData>
-                 ) : DiffUtil.Callback() {
+class DifferUtilCalculator(
+    private val oldList: List<TodoItemData>,
+    private val newList: List<TodoItemData>
+) : DiffUtil.Callback() {
     override fun getOldListSize(): Int = oldList.size
 
     override fun getNewListSize(): Int = newList.size
@@ -14,11 +15,11 @@ class DifferUtil(private val oldList : List<TodoItemData>,
         oldList[oldItemPosition].id == newList[newItemPosition].id
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean =
-        compareTodoItems(oldList[oldItemPosition], newList[newItemPosition])
+        areTodoItemsEqual(oldList[oldItemPosition], newList[newItemPosition])
 
 }
 
-fun compareTodoItems(td1 : TodoItemData, td2 : TodoItemData) : Boolean {
+fun areTodoItemsEqual(td1: TodoItemData, td2: TodoItemData): Boolean {
     return (td1.id == td2.id &&
             td1.text == td2.text &&
             td1.importance == td2.importance &&

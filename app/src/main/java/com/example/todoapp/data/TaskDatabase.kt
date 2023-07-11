@@ -1,13 +1,14 @@
-package com.example.todoapp.repository
+package com.example.todoapp.data
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.model.PriorityConverter
+import com.example.todoapp.model.TodoItemData
 
-@Database(entities = arrayOf(TodoItemData::class), version = 1, exportSchema = false)
+@Database(entities = [TodoItemData::class], version = 1, exportSchema = false)
 @TypeConverters(PriorityConverter::class)
 abstract class TaskDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
@@ -24,7 +25,7 @@ abstract class TaskDatabase : RoomDatabase() {
                         context.applicationContext,
                         TaskDatabase::class.java,
                         "task_database"
-                    ).fallbackToDestructiveMigration()
+                    ).fallbackToDestructiveMigration().allowMainThreadQueries()
                         .build()
                     INSTANCE = instance
                 }

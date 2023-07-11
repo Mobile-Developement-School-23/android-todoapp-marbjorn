@@ -1,4 +1,4 @@
-package com.example.todoapp.repository
+package com.example.todoapp.data
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -7,23 +7,28 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.todoapp.storage.TodoItemData
+import com.example.todoapp.model.TodoItemData
 
 @Dao
 interface TaskDao {
     @Query("SELECT * FROM task_table ORDER BY changedAt DESC")
     fun getAllTasks() : LiveData<List<TodoItemData>>
 
+    @Query("SELECT * FROM task_table ORDER BY changedAt DESC")
+    fun getAllTasksAsList() : List<TodoItemData>
+
     @Delete
-    suspend fun deleteItem(todoItemDB: TodoItemData )
+    suspend fun deleteItem(todoItemDB: TodoItemData)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addItem(todoItemDB: TodoItemData )
+    suspend fun insertItem(todoItemDB: TodoItemData)
 
+    @Query("SELECT COUNT(*) FROM task_table")
+    suspend fun itemsCount() : Int
     @Query("DELETE FROM task_table")
     suspend fun deleteAll()
 
     @Update
-    suspend fun update(todoItemDB: TodoItemData )
+    suspend fun updateItem(todoItemDB: TodoItemData)
 
 }
