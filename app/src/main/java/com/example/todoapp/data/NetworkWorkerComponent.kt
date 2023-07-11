@@ -15,7 +15,8 @@ import javax.inject.Scope
 annotation class WorkerScope
 
 @WorkerScope
-@Subcomponent
+@Subcomponent (modules = [PeriodicWorkRequestModule::class,
+    WorkManagerModule::class])
 interface NetworkWorkerComponent {
     @Subcomponent.Factory
     interface Factory {

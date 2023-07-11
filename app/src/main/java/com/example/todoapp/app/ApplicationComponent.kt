@@ -1,5 +1,6 @@
 package com.example.todoapp.app
 
+import android.app.Application
 import android.content.Context
 import com.example.todoapp.data.SharedPrefs
 import com.example.todoapp.api.NetworkConnectivityObserver
@@ -25,7 +26,10 @@ import javax.inject.Scope
 @Scope
 annotation class ApplicationScope
 
-@Component(modules = [AppModule::class])
+@Component(modules = [
+    ConnectivityObserverModule::class,
+    TodoRepositoryModule::class,
+    RetrofitModule::class])
 @ApplicationScope
 interface ApplicationComponent {
 
@@ -38,21 +42,12 @@ interface ApplicationComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance context: Context): ApplicationComponent
+        fun create(
+            @BindsInstance application: Application,
+            @BindsInstance context: Context): ApplicationComponent
     }
 }
 
-@Module(includes = [
-    ConnectivityObserverModule::class,
-    TodoRepositoryModule::class,
-    RetrofitModule::class,
-    App::class,
-    PeriodicWorkRequestModule::class,
-    WorkManagerModule::class],
-subcomponents = [TodoListFragmentComponent::class,
-    AddTaskFragmentViewComponent::class
-    ])
-class AppModule
 @Module
 class ConnectivityObserverModule {
     @Provides
