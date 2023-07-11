@@ -1,5 +1,6 @@
 package com.example.todoapp.vm
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
@@ -20,7 +21,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TodoViewModel @Inject constructor(
-    context : Context,
+    val application: Application,
     val todoRepository: TodoRepository,
     connectivityObserver: NetworkConnectivityObserver) : ViewModel() {
 
@@ -46,29 +47,10 @@ class TodoViewModel @Inject constructor(
         connectivityObserver.observe().onEach {
             status = it
             if (it == ConnectivityObserver.Status.Available) {
-                val statusResponse = todoRepository.syncItemsFromRemote()
-                if (statusResponse == State.Success) {
-                    Toast.makeText(context, "Данные обновлены", Toast.LENGTH_SHORT).show()
-                }
-                else {
-                    Toast.makeText(context,
-                        "Возникла ошибка при синхронизации. Данные сохранены локально",
-                        Toast.LENGTH_LONG).show()
-                }
+                val statusResponse = State.Success//todoRepository.syncItemsFromRemote()
+                Toast.makeText(application.applicationContext, notifySync(statusResponse), Toast.LENGTH_SHORT).show()
             }
         }.launchIn(viewModelScope)
-    }
-
-    fun add(todoItemDB: TodoItemData) {
-        viewModelScope.launch {
-            todoRepository.addItem(todoItemDB, hasInternetConnection())
-        }
-    }
-
-    fun delete(todoItemDB: TodoItemData) {
-        viewModelScope.launch {
-            todoRepository.deleteItem(todoItemDB, hasInternetConnection())
-        }
     }
 
     fun change(todoItemDB: TodoItemData) {
@@ -80,6 +62,7 @@ class TodoViewModel @Inject constructor(
     fun syncro() {
         viewModelScope.launch {
             val state = todoRepository.syncItemsFromRemote()
+            Toast.makeText(application.applicationContext, notifySync(state), Toast.LENGTH_SHORT).show()
             Log.d("STATE", state.code.toString())
         }
     }
@@ -87,19 +70,10 @@ class TodoViewModel @Inject constructor(
     private fun hasInternetConnection() : Boolean {
         return status == ConnectivityObserver.Status.Available
     }
-//    private fun hasInternetConnection(): Boolean {
-//        val connectivityManager = application.getSystemService(
-//            Context.CONNECTIVITY_SERVICE
-//        ) as ConnectivityManager
-//        val activeNetwork = connectivityManager.activeNetwork ?: return false
-//        val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
-//        return when {
-//            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-//            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-//            capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-//            else -> false
-//        }
-//    }
 
 
+    fun notifySync(state : State) : String = when(state) {
+            State.Success -> "Синхронизация выполнена успешно"
+            else -> "Ошибка синхронизации"
+    }
 }

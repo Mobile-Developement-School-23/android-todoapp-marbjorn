@@ -17,10 +17,11 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class AddTaskModel @Inject constructor(
-    context : Context,
+    val context : Context,
     val todoRepository: TodoRepository,
     val connectivityObserver: NetworkConnectivityObserver) : ViewModel() {
 
+    private lateinit var state : State
     var hasDeadline = MutableLiveData<Boolean>(false)
     var priority = MutableLiveData<Priority>(Priority.MEDIUM)
     var deadlineDate = MutableLiveData<Long?>(null)
@@ -31,35 +32,27 @@ class AddTaskModel @Inject constructor(
     init {
         connectivityObserver.observe().onEach {
             status = it
-            if (it == ConnectivityObserver.Status.Available) {
-                val statusResponse = todoRepository.syncItemsFromRemote()
-                if (statusResponse == State.Success) {
-                    Toast.makeText(context, "Данные обновлены", Toast.LENGTH_SHORT).show()
-                }
-                else {
-                    Toast.makeText(context,
-                        "Возникла ошибка при синхронизации. Данные сохранены локально",
-                        Toast.LENGTH_LONG).show()
-                }
-            }
         }.launchIn(viewModelScope)
     }
 
     fun add(todoItemDB: TodoItemData) {
         viewModelScope.launch {
-            todoRepository.addItem(todoItemDB, hasInternetConnection())
+            state = todoRepository.addItem(todoItemDB, hasInternetConnection())
+            Toast.makeText(context, notifyState(state, "добавлена"), Toast.LENGTH_SHORT).show()
         }
     }
 
     fun delete(todoItemDB: TodoItemData) {
         viewModelScope.launch {
-            todoRepository.deleteItem(todoItemDB, hasInternetConnection())
+            state = todoRepository.deleteItem(todoItemDB, hasInternetConnection())
+            Toast.makeText(context, notifyState(state, "удалена"), Toast.LENGTH_SHORT).show()
         }
     }
 
     fun change(todoItemDB: TodoItemData) {
         viewModelScope.launch {
-            todoRepository.updateItem(todoItemDB, hasInternetConnection())
+            state = todoRepository.updateItem(todoItemDB, hasInternetConnection())
+            Toast.makeText(context, notifyState(state, "изменена"), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -69,6 +62,14 @@ class AddTaskModel @Inject constructor(
             item = todoRepository.todoList.value?.filter { it.id == id }!!.toList()[0]
         }
         return item
+    }
+
+    fun notifyState(state : State, temp : String) : String{
+        when(state) {
+            State.Success -> return "Задача $temp"
+            State.AbleToSync -> return "Выполнено, необходима синхронизация"
+            else -> return "Задача не $temp, ошибка"
+        }
     }
 
     private fun hasInternetConnection() : Boolean {

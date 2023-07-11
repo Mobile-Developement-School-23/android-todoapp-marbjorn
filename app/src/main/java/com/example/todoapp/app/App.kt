@@ -5,17 +5,13 @@ import android.content.Context
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.NonDisposableHandle.parent
+import javax.inject.Inject
 
 
-@Module
 class App : Application() {
 
     val appComponent: ApplicationComponent by lazy {
-        DaggerApplicationComponent.factory().create(this.applicationContext)
-    }
-    @Provides
-    fun providesApplication() : Application {
-        return this
+        DaggerApplicationComponent.factory().create(this, this.applicationContext)
     }
 
 }

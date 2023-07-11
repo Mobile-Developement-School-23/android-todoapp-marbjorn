@@ -16,7 +16,7 @@ import javax.inject.Inject
 interface ConnectivityObserver {
     fun observe() : Flow<Status>
     enum class Status {
-        Available, Unavailable, Losting, Lost
+        Available, Unavailable, Lost
     }
 }
 
@@ -31,15 +31,6 @@ class NetworkConnectivityObserver @Inject constructor(context : Context) : Conne
                     super.onAvailable(network)
                     launch {
                         send(ConnectivityObserver.Status.Available)
-                        Log.d("Connection", "Avalilable")
-                    }
-                }
-
-                override fun onLosing(network: Network, maxMsToLive: Int) {
-                    super.onLosing(network, maxMsToLive)
-                    launch {
-                        send(ConnectivityObserver.Status.Losting)
-                        Log.d("Connection", "Losting")
                     }
                 }
 
@@ -47,7 +38,6 @@ class NetworkConnectivityObserver @Inject constructor(context : Context) : Conne
                     super.onLost(network)
                     launch {
                         send(ConnectivityObserver.Status.Lost)
-                        Log.d("Connection", "Lost")
                     }
                 }
 
@@ -55,16 +45,16 @@ class NetworkConnectivityObserver @Inject constructor(context : Context) : Conne
                     super.onUnavailable()
                     launch {
                         send(ConnectivityObserver.Status.Unavailable)
-                        Log.d("Connection", "Unavailable")
                     }
                 }
-
             }
+
             connectivityManager.registerDefaultNetworkCallback(callback)
             awaitClose {
                 connectivityManager.unregisterNetworkCallback(callback)
             }
         }.distinctUntilChanged()
     }
+
 
 }

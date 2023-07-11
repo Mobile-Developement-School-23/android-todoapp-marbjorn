@@ -101,7 +101,7 @@ class AddTaskViewController @Inject constructor(
             else if (!areTodoItemsEqual(todoItem, todoItemData!!)) {
                 Log.d("AddTask", "toSave")
                 Log.d("ItemToSave", todoItem.toString())
-                todoItem.changedAt = Calendar.getInstance().timeInMillis
+                todoItem.changedAt = Calendar.getInstance().timeInMillis/1000
                 viewModel.change(todoItem)
             }
             findNavController(binding.root).navigate(R.id.action_addTaskFragment_to_todoListFragment)
@@ -123,7 +123,7 @@ class AddTaskViewController @Inject constructor(
     private fun buildTodoItem(reference : TodoItemData?) : TodoItemData = with(binding){
         val calendar = Calendar.getInstance()
         val newId = reference?.id ?: UUID.randomUUID().toString()
-        val newCreatedAt = reference?.createdAt ?: calendar.timeInMillis
+        val newCreatedAt = reference?.createdAt ?: calendar.timeInMillis/1000
         return TodoItemData(
             id = newId,
             text = etTodo.text.toString(),

@@ -29,6 +29,7 @@ class TodoRepository @Inject constructor(val taskDao: TaskDao,
         val response = safeApiCall { api.getListOfItems() }
         when (response) {
             is NetworkResponse.Success -> {
+                if (response.data.revision!! > prefs.getRevision() + 1)
                 deleteAllLocal()
                 for (i in response.data.list) {
                     addItemLocal(i)
@@ -51,18 +52,21 @@ class TodoRepository @Inject constructor(val taskDao: TaskDao,
 
     suspend fun syncItemsFromRemote() : State {
         val _revision = prefs.getRevision()
+        rewriteItemsFromRemote()
         val listFromDb = TodoListWrapper(
             list = taskDao.getAllTasksAsList(),
             revision = _revision
         )
+        Log.d("List", listFromDb.toString())
+
         val response = safeApiCall {
             api.patchListOfItems(_revision, listFromDb )
         }
 
         when (response) {
             is NetworkResponse.Success -> {
-                prefs.setRevision(response.data.revision!!)
                 deleteAllLocal()
+                prefs.setRevision(response.data.revision!!)
                 for (i in response.data.list) {
                     addItemLocal(i)
                 }

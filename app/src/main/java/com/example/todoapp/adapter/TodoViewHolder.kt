@@ -23,7 +23,7 @@ class TodoViewHolder(
 
             cbDone.setOnClickListener {
                 todoItem.done = cbDone.isChecked
-                todoItem.changedAt = Calendar.getInstance().timeInMillis
+                todoItem.changedAt = Calendar.getInstance().timeInMillis/1000
                 strikeText(tvText)
                 viewModel.change(todoItem)
             }
