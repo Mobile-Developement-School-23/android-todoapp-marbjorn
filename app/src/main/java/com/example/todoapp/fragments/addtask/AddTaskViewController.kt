@@ -24,10 +24,10 @@ class AddTaskViewController @Inject constructor(
     val lifecycleOwner: LifecycleOwner,
 ) {
     private var todoItemData: TodoItemData? = null
-    init {
+    init {/*
         Log.d("viewModelState", viewModel.priority.value.toString())
         Log.d("viewModelState", viewModel.deadlineDate.value.toString())
-        Log.d("viewModelState", viewModel.hasDeadline.value.toString())
+        Log.d("viewModelState", viewModel.hasDeadline.value.toString())*/
     }
 
     fun initLifeDataForChange() = with(binding){

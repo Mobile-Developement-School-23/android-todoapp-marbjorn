@@ -6,6 +6,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.material3.Text
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -34,8 +36,8 @@ class AddTaskFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAddTaskBinding.inflate(inflater, container, false)
-        fragmentViewComponent = requireContext().appComponent.addTaskFragmentViewComponent().create(
+        /*_binding = FragmentAddTaskBinding.inflate(inflater, container, false)*/
+        /*fragmentViewComponent = requireContext().appComponent.addTaskFragmentViewComponent().create(
             this,
             args,
             binding,
@@ -43,8 +45,14 @@ class AddTaskFragment : Fragment() {
             viewModel
         ).apply {
             addTaskViewController.initLifeDataForChange()
+        }*/
+        return ComposeView(requireContext()).apply {
+            setContent {
+                AppTheme {
+                    TodoTextFields()
+                }
+            }
         }
-        return binding.root
     }
 
     override fun onDestroyView() {
