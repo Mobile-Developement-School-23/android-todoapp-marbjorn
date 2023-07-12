@@ -29,29 +29,8 @@ class AddTaskViewController @Inject constructor(
         Log.d("viewModelState", viewModel.deadlineDate.value.toString())
         Log.d("viewModelState", viewModel.hasDeadline.value.toString())*/
     }
+/*
 
-    fun initLifeDataForChange() = with(binding){
-        val todoItemId = args.todoItemId
-        if (todoItemId != null) {
-            val _todoItemData = viewModel.getTodoItemById(todoItemId)
-            if (_todoItemData != null && viewModel.isInit.value == false) {
-                todoItemData = _todoItemData.copy()
-                viewModel.isInit.value = true
-                initLifeData(todoItemData!!)
-            }
-        }
-        setUpViews()
-    }
-
-    private fun initLifeData(todoItemData: TodoItemData) = with(binding) {
-        val hasDeadline = todoItemData.deadline != null
-        if (hasDeadline) {
-            viewModel.deadlineDate.value = todoItemData.deadline
-        }
-        viewModel.priority.value = todoItemData.importance
-        viewModel.hasDeadline.value = hasDeadline
-        etTodo.setText(todoItemData.text)
-    }
 
     private fun setUpViews() = with(binding){
         tvCurrentDate.text = formatDate(viewModel.deadlineDate.value)
@@ -74,17 +53,11 @@ class AddTaskViewController @Inject constructor(
         Log.d("MENU", viewModel.priority.value.toString())
         viewModel.priority = menuManager.priority as MutableLiveData<Priority>
         viewModel.priority.observe(lifecycleOwner) {
-            setPriorityInView(viewModel.priority.value!!)
+            //setPriorityInView(viewModel.priority.value!!)
         }
     }
 
-    private fun setPriorityInView(priority: Priority) = with(binding) {
-        when (priority) {
-            Priority.HIGH -> tvCurrentPriority.text = fragment.requireActivity().getText(R.string.priority_high)
-            Priority.MEDIUM -> tvCurrentPriority.text = fragment.requireActivity().getText(R.string.priority_common)
-            Priority.LOW -> tvCurrentPriority.text = fragment.requireActivity().getText(R.string.priority_low)
-        }
-    }
+
 
     private fun setUpSwitch() = binding.swDate.setOnClickListener{
         viewModel.hasDeadline.value = binding.swDate.isChecked
@@ -96,13 +69,13 @@ class AddTaskViewController @Inject constructor(
             if (todoItemData == null) {
                 Log.d("AddTask", "toSave")
                 Log.d("ItemToSave", todoItem.toString())
-                viewModel.add(todoItem)
+                //viewModel.add(todoItem)
             }
             else if (!areTodoItemsEqual(todoItem, todoItemData!!)) {
                 Log.d("AddTask", "toSave")
                 Log.d("ItemToSave", todoItem.toString())
                 todoItem.changedAt = Calendar.getInstance().timeInMillis/1000
-                viewModel.change(todoItem)
+                //viewModel.change(todoItem)
             }
             findNavController(binding.root).navigate(R.id.action_addTaskFragment_to_todoListFragment)
         }
@@ -159,5 +132,5 @@ class AddTaskViewController @Inject constructor(
         val formatter = SimpleDateFormat("dd MMMM yyyy", Locale("ru"))
         return if (date != null) formatter.format(date)
         else defaultValue
-    }
+    }*/
 }
