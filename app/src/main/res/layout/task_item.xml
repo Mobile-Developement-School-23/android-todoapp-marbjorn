@@ -41,6 +41,7 @@
         android:ellipsize="end"
         android:maxLines="3"
         android:text="дело"
+        android:textAppearance="@style/Body"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_priority"
