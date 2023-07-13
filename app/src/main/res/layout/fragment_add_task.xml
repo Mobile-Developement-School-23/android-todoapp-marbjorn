@@ -32,16 +32,18 @@
                     android:textSize="16sp"
 
 
-                    android:textColor="@color/color_light_blue" />
+                    android:textColor="@color/blue" />
+
                 <ImageButton
                     android:id="@+id/ib_cancel"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:background="@drawable/round_close_24"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    />
+                    tools:ignore="SpeakableTextPresentCheck"
+                    android:contentDescription="" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
@@ -55,21 +57,6 @@
         android:layout_height="match_parent"
         android:layout_marginTop="15dp"
         >
-
-<!--        <com.google.android.material.button.MaterialButton-->
-<!--            android:id="@+id/btn_save"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@android:color/transparent"-->
-<!--            android:text="@string/save"-->
-<!--            android:textColor="@color/color_light_blue"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            android:layout_marginEnd="10dp"-->
-<!--            android:layout_marginTop="10dp"-->
-
-
-<!--            />-->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/textLayout_todo"
             android:layout_width="match_parent"
@@ -83,15 +70,16 @@
             android:hint="@string/todo_edit_hint"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
             >
+
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_todo"
-                android:inputType="none"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minLines="4"
                 android:gravity="top"
+                android:inputType="none"
+                android:minLines="4"
 
-                />
+                tools:ignore="SpeakableTextPresentCheck" />
 
         </com.google.android.material.textfield.TextInputLayout>
         <LinearLayout
@@ -136,14 +124,15 @@
             >
 
             <com.google.android.material.switchmaterial.SwitchMaterial
-                android:layout_width="wrap_content"
                 android:id="@+id/sw_date"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:saveEnabled="false"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginEnd="10dp"
-                android:saveEnabled="false"/>
+                tools:ignore="TouchTargetSizeCheck" />
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
@@ -162,7 +151,7 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_date"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                android:textColor="@color/color_light_blue"
+                android:textColor="@color/blue"
                 android:saveEnabled="false"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -187,7 +176,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
-            android:textColor="@color/color_light_red"
+            android:textColor="@color/red"
             app:layout_constraintTop_toBottomOf="@id/div2"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/delete"
@@ -197,19 +186,10 @@
             android:drawableLeft="@drawable/baseline_delete_24"
             android:layout_marginStart="10dp"
             android:layout_marginVertical="10dp"
-
+            android:textSize="18sp"
 
             />
-<!--        <ImageButton-->
-<!--            android:id="@+id/ib_cancel"-->
-<!--            android:layout_width="30dp"-->
-<!--            android:layout_height="30dp"-->
-<!--            android:background="@drawable/round_close_24"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="@id/btn_save"-->
-<!--            app:layout_constraintBottom_toBottomOf="@id/btn_save"-->
-<!--            android:layout_marginStart="10dp"-->
-<!--            />-->
+
 
 
 

@@ -3,11 +3,15 @@ package com.example.todoapp.fragments.todolist
 import android.app.Activity
 import android.util.Log
 import android.view.MenuItem
+import androidx.appcompat.content.res.AppCompatResources
 
 import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
+import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
 import com.example.todoapp.adapter.TodoAdapter
 import com.example.todoapp.app.appComponent
@@ -25,6 +29,8 @@ class TodoListViewController @Inject constructor(
     val viewModel : TodoViewModel
     ) {
 
+
+    private var isDoneShown = true
     fun setUpViews() {
         setUpRcView()
         setUpToolbar()
@@ -36,16 +42,24 @@ class TodoListViewController @Inject constructor(
         val layoutManager =
             LinearLayoutManager(fragment.requireActivity().applicationContext, LinearLayoutManager.VERTICAL, false)
         rvTodolist.layoutManager = layoutManager
+
+        val scroller = LinearSmoothScroller(fragment.requireContext())
+        layoutManager.isSmoothScrollbarEnabled = true
         viewModel.listOfItems.observe(lifecycleOwner){
             newList ->
-            adapter.setList(newList)
+                val count = newList.filter { it.done }.size
+                val str = fragment.requireActivity().getString(R.string.str_done, count)
+                tvDoneCount.setText(str)
+                adapter.setList(newList!!.filter { (!it.done && !isDoneShown) || isDoneShown })
+                scroller.setTargetPosition(0)
+                layoutManager.startSmoothScroll(scroller)
         }
     }
 
     private fun setUpToolbar() = rootViewBinding.toolbar.setOnMenuItemClickListener { item ->
         when (item.itemId) {
                 R.id.menu_show_done -> {
-                    changeVisibilityIcon(item, true)
+                    changeVisibilityIcon(item)
                     true
                 }
 
@@ -64,8 +78,16 @@ class TodoListViewController @Inject constructor(
     }
 
     //пока еще не успел сделать...
-    private fun changeVisibilityIcon(item : MenuItem, isVisible : Boolean) {
-        if (isVisible) item.icon = R.drawable.baseline_visibility_24.toDrawable()
-        else item.icon = R.drawable.baseline_visibility_off_24.toDrawable()
+    private fun changeVisibilityIcon(item : MenuItem) {
+        if (!isDoneShown) {
+            item.icon = AppCompatResources.getDrawable(fragment.requireContext(), R.drawable.baseline_visibility_24)
+            isDoneShown = true
+        }
+        else {
+            item.icon = AppCompatResources.getDrawable(fragment.requireContext(), R.drawable.baseline_visibility_off_24)
+            isDoneShown = false
+        }
+
+        adapter.setList(viewModel.listOfItems.value!!.filter { (!it.done && !isDoneShown) || isDoneShown })
     }
 }

@@ -20,29 +20,45 @@ class TodoViewHolder(
             cbDone.isChecked = todoItem.done
             tvText.text = todoItem.text
             strikeText(tvText)
-
+            setIconVisibility(todoItem)
+            modifyByImportance(todoItem)
             cbDone.setOnClickListener {
                 todoItem.done = cbDone.isChecked
-                todoItem.changedAt = Calendar.getInstance().timeInMillis/1000
+                setIconVisibility(todoItem)
+                todoItem.changedAt = Calendar.getInstance().timeInMillis
                 strikeText(tvText)
+                modifyByImportance(todoItem)
                 viewModel.change(todoItem)
             }
-            when (todoItem.importance) {
-                Priority.HIGH -> {
-                    cbDone.setButtonDrawable(R.drawable.custom_check_box_high_prioroty_selector)
-                    ivPriority.setImageResource(R.drawable.baseline_priority_high_24)
-                }
-                Priority.LOW -> {
-                    ivPriority.setImageResource(R.drawable.baseline_arrow_downward_24)
-                }
-                else -> {
-                    ivPriority.visibility = ImageView.GONE
-                }
-            }
+
         }
 
         private fun strikeText(tv : TextView) {
             if (binding.cbDone.isChecked) tv.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
             else tv.paintFlags = 0
         }
+
+        private fun modifyByImportance(todoItem: TodoItemData) = with (binding) {
+            when (todoItem.importance) {
+                Priority.HIGH -> {
+                    cbDone.setButtonDrawable(R.drawable.custom_check_box_high_prioroty_selector)
+                    ivPriority.setImageResource(R.drawable.baseline_priority_high_24)
+                    }
+
+                Priority.LOW -> {
+                    cbDone.setButtonDrawable(R.drawable.custom_check_box_selector)
+                    ivPriority.setImageResource(R.drawable.baseline_arrow_downward_24)
+                    }
+                Priority.MEDIUM -> {
+                    cbDone.setButtonDrawable(R.drawable.custom_check_box_selector)
+                    ivPriority.visibility = ImageView.GONE
+                }
+            }
+        }
+
+
+    private fun setIconVisibility(todoItem: TodoItemData) = with(binding) {
+        if (!todoItem.done) ivPriority.visibility = ImageView.VISIBLE
+        else ivPriority.visibility = ImageView.GONE
+    }
     }

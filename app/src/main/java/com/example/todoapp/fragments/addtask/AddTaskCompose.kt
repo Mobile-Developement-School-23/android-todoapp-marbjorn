@@ -1,6 +1,7 @@
 package com.example.todoapp.fragments.addtask
 
 import android.util.Log
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
@@ -27,6 +30,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,7 +53,9 @@ import com.example.todoapp.fragments.addtask.theme.customTypography
 import com.example.todoapp.fragments.addtask.theme.spacings
 import com.example.todoapp.model.Priority
 import com.example.todoapp.model.TodoItemData
+import com.example.todoapp.vm.AddTaskEvent
 import com.example.todoapp.vm.AddTaskModel
+import com.example.todoapp.vm.AddTaskModelFactory
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
@@ -58,20 +65,29 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
 
+val todoItemData = TodoItemData(
+    id = "",
+    text = "Заглушка",
+    changedAt = Calendar.getInstance().timeInMillis,
+    createdAt = Calendar.getInstance().timeInMillis,
+    importance = Priority.HIGH,
+    deadline = Calendar.getInstance().timeInMillis
+)
 @ExperimentalMaterial3Api
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskScreen (
-    viewModel: AddTaskModel,
-    navController: NavController
+    initialTodoItem: MutableState<TodoItemData?> = mutableStateOf( null ),
+    isInitialTodoItemInitialized: MutableState<Boolean> = mutableStateOf(false),
+    onEvent: (AddTaskEvent, TodoItemData) -> Unit = { _, _ ->},
+    navController: NavController = NavController(LocalContext.current)
 ) {
-    val initialTodoItem = viewModel.stateTodoItem.value
-
     var dropdownMenuExpanded by rememberSaveable { mutableStateOf(false) }
     var textValue by rememberSaveable { mutableStateOf("") }
     var priorityValue by remember { mutableStateOf(Priority.MEDIUM) }
 
     var switchValue by remember { mutableStateOf(false) }
+
     val deadlineValueState = rememberSheetState()
     var deadlineDate by remember {
         mutableStateOf<Long?>(null)
@@ -92,16 +108,19 @@ fun AddTaskScreen (
             }
         })
 
+    val verticalScrollState = rememberScrollState()
+    val alpha: Int by animateIntAsState(if (verticalScrollState.value > 0) 12 else 0)
 
     //initializing add task to change item
-    if (viewModel.stateInit.value && viewModel.stateTodoItem.value != null) {
+    if (!isInitialTodoItemInitialized.value && initialTodoItem.value != null) {
         Log.d("Id", initialTodoItem.toString())
         deleteButtonEnabled = true
-        switchValue = viewModel.stateTodoItem.value!!.deadline != null
-        textValue = viewModel.stateTodoItem.value!!.text
-        priorityValue = viewModel.stateTodoItem.value!!.importance
-        deadlineDate = viewModel.stateTodoItem.value!!.deadline
+        switchValue = initialTodoItem.value!!.deadline != null
+        textValue = initialTodoItem.value!!.text
+        priorityValue = initialTodoItem.value!!.importance
+        deadlineDate = initialTodoItem.value!!.deadline
         deadlineString = stringDate(deadlineDate)
+        isInitialTodoItemInitialized.value = true
     }
 
 
@@ -109,7 +128,7 @@ fun AddTaskScreen (
     Scaffold(
         topBar = {
             Surface(
-                shadowElevation = 12.dp,
+                shadowElevation = alpha.dp,
             ) {
                 TopAppBar(
                     title = {},
@@ -123,14 +142,17 @@ fun AddTaskScreen (
                     actions = {
                         Button(
                             onClick = { //save button
-                                viewModel.addOrUpdate(
-                                    todoItemDB = TodoItemData(
-                                        id = UUID.randomUUID().toString(),
+                                onEvent(
+                                    AddTaskEvent.AddOrUpdate,
+                                    TodoItemData(
+                                        id = if (initialTodoItem.value == null)
+                                            UUID.randomUUID().toString()
+                                            else initialTodoItem.value!!.id,
                                         text = textValue,
                                         importance = priorityValue,
                                         deadline = deadlineDate,
-                                        createdAt = if (initialTodoItem != null)
-                                            initialTodoItem.createdAt
+                                        createdAt = if (initialTodoItem.value != null)
+                                            initialTodoItem.value!!.createdAt
                                         else Calendar.getInstance().timeInMillis,
                                         changedAt = Calendar.getInstance().timeInMillis
                                     )
@@ -143,7 +165,7 @@ fun AddTaskScreen (
                             )
                         ) {
                             Text(
-                                text = "Сохранить".uppercase(),
+                                text = stringResource(id = R.string.save).uppercase(),
                                 color = MaterialTheme.colors.blue,
                                 style = MaterialTheme.customTypography.buttonText
                             )
@@ -153,6 +175,7 @@ fun AddTaskScreen (
         }) {
         Column(
             modifier = Modifier
+                .verticalScroll(verticalScrollState)
                 .padding(it)
                 .padding(
                     top = MaterialTheme.spacings.standartPadding,
@@ -180,9 +203,9 @@ fun AddTaskScreen (
                     .defaultMinSize(
                         minHeight = 100.dp
                     )
-                    .offset(y = 3.dp) //shifting shadow
+                    .offset(y = 3.dp) //shifting shadow to bottom side
                     .shadow(
-                        elevation = 2.dp,
+                        elevation = 5.dp,
                         clip = false,
                     )
                     .offset(y = -3.dp)
@@ -208,20 +231,22 @@ fun AddTaskScreen (
                         id = R.string.priority_high
                     ),
                         color = MaterialTheme.colors.red,
-                        modifier = Modifier.padding(bottom = MaterialTheme.spacings.smallPadding)
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.spacings.smallPadding)
                             .clickable {
-                            priorityValue = Priority.HIGH
-                            dropdownMenuExpanded = false
-                        }
+                                priorityValue = Priority.HIGH
+                                dropdownMenuExpanded = false
+                            }
                     )
                     Text(stringResource(
                         id = R.string.priority_common
                     ),
-                        modifier = Modifier.padding(bottom = MaterialTheme.spacings.smallPadding)
+                        modifier = Modifier
+                            .padding(bottom = MaterialTheme.spacings.smallPadding)
                             .clickable {
-                            priorityValue = Priority.MEDIUM
-                            dropdownMenuExpanded = false
-                        }
+                                priorityValue = Priority.MEDIUM
+                                dropdownMenuExpanded = false
+                            }
                     )
                     Text(stringResource(
                         id = R.string.priority_low
@@ -291,10 +316,11 @@ fun AddTaskScreen (
             )
             //delete button
             Button(
+                modifier = Modifier.padding(bottom = MaterialTheme.spacings.largePadding),
                 enabled = deleteButtonEnabled,
                 onClick = {
-                    if (initialTodoItem != null) {
-                        viewModel.delete(todoItemDB = initialTodoItem)
+                    if (initialTodoItem.value != null) {
+                        onEvent(AddTaskEvent.Delete, initialTodoItem.value!!)
                     }
                     navController.navigate(R.id.action_addTaskFragment_to_todoListFragment)
                 },

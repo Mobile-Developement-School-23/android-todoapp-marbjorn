@@ -33,17 +33,20 @@ class AddTaskModel @Inject constructor(
     var stateInit = mutableStateOf(false)
     private var status : ConnectivityObserver.Status = ConnectivityObserver.Status.Unavailable
 
+    fun onAddTaskEvent(event : AddTaskEvent, todoItemDB: TodoItemData) {
+        when(event) {
+            AddTaskEvent.AddOrUpdate -> addOrUpdate(todoItemDB)
+            AddTaskEvent.Delete -> delete(todoItemDB)
+        }
+    }
+
     fun initLifeDataForChange(todoItemId : String?) {
         if (todoItemId != null) {
             val _todoItemData = getTodoItemById(todoItemId)
             Log.d("Id", todoItemId.toString())
             if (_todoItemData != null && stateInit.value == false) {
                 stateTodoItem.value = _todoItemData.copy()
-                stateInit.value = true
             }
-        }
-        else {
-            stateTodoItem = mutableStateOf(null)
         }
     }
 
