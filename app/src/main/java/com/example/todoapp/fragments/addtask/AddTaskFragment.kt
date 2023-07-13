@@ -5,22 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MaterialTheme.shapes
-import androidx.compose.material3.MaterialTheme.typography
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.app.appComponent
 import com.example.todoapp.vm.AddTaskModel
-class AddTaskFragment : Fragment() {
 
-    var fragmentViewComponent : AddTaskFragmentViewComponent? = null
+class AddTaskFragment : Fragment() {
 
     private val args : AddTaskFragmentArgs by navArgs()
 
@@ -49,14 +42,6 @@ class AddTaskFragment : Fragment() {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        fragmentViewComponent = null
-    }
 }
 
 

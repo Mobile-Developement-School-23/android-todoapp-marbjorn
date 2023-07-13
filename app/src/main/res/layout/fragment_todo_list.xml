@@ -42,7 +42,7 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
                 app:menu="@menu/menu_todolist"
                 android:layout_gravity="bottom"
-                app:title="My tasks" />
+                app:title="@string/app_name" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>

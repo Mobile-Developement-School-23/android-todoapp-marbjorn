@@ -73,16 +73,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.UUID
 
-val todoItemData = TodoItemData(
-    id = "",
-    text = "Preview Example",
-    changedAt = Calendar.getInstance().timeInMillis,
-    createdAt = Calendar.getInstance().timeInMillis,
-    importance = Priority.HIGH,
-    deadline = Calendar.getInstance().timeInMillis
-)
 @ExperimentalMaterial3Api
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTaskScreen (
     initialTodoItem: MutableState<TodoItemData?> = mutableStateOf( null ),
@@ -98,11 +89,11 @@ fun AddTaskScreen (
 
     val nonEmptyString = stringResource(id = R.string.deadline_not_selected)
     val deadlineValueState = rememberMaterialDialogState()
-    var deadlineDate by remember {
+    val deadlineDate = remember {
         mutableStateOf<Long?>(null)
     }
 
-    var deadlineString by remember { mutableStateOf("") }
+    val deadlineString = remember { mutableStateOf("") }
 
     var deleteButtonEnabled by remember {
         mutableStateOf(false)
@@ -119,12 +110,19 @@ fun AddTaskScreen (
         switchValue = initialTodoItem.value!!.deadline != null
         textValue.value = initialTodoItem.value!!.text
         priorityValue = initialTodoItem.value!!.importance
-        deadlineDate = initialTodoItem.value!!.deadline
-        deadlineString = dateToString(deadlineDate, switchValue, nonEmptyString)
+        deadlineDate.value = initialTodoItem.value!!.deadline
+        deadlineString.value = dateToString(deadlineDate.value, switchValue, nonEmptyString)
         isInitialTodoItemInitialized.value = true
     }
 
 
+    CustomDatePickerDialog(
+        deadlineValueState,
+        deadlineDate,
+        deadlineString,
+        switchValue,
+        nonEmptyString
+    )
 
     Scaffold(
         topBar = {
@@ -155,7 +153,7 @@ fun AddTaskScreen (
                                         else initialTodoItem.value!!.id,
                                         text = textValue.value,
                                         importance = priorityValue,
-                                        deadline = deadlineDate,
+                                        deadline = deadlineDate.value,
                                         createdAt = if (initialTodoItem.value != null)
                                             initialTodoItem.value!!.createdAt
                                         else Calendar.getInstance().timeInMillis,
@@ -268,7 +266,7 @@ fun AddTaskScreen (
                         stringResource(id = R.string.date),
                         style = MaterialTheme.typography.headlineMedium
                     )
-                    Text(deadlineString,
+                    Text(deadlineString.value,
                         style = MaterialTheme.typography.headlineSmall,
                         color = colorResource(id = R.color.blue))
                 }
@@ -286,9 +284,9 @@ fun AddTaskScreen (
                     onCheckedChange = {
                         switchValue = it
                         if (!switchValue) {
-                            deadlineDate = null
+                            deadlineDate.value = null
                         }
-                        deadlineString = dateToString(deadlineDate, switchValue, nonEmptyString)
+                        deadlineString.value = dateToString(deadlineDate.value, switchValue, nonEmptyString)
                     },
 
                     modifier = Modifier.padding(end = 10.dp)
@@ -326,6 +324,7 @@ fun AddTaskScreen (
         }
     }
 
+@Preview
 @Composable  //text field
 private fun TextField(textValue : MutableState<String> = mutableStateOf("")) {
     OutlinedTextField(
@@ -356,18 +355,9 @@ private fun TextField(textValue : MutableState<String> = mutableStateOf("")) {
                 elevation = 5.dp,
                 clip = false,
             )
-            .offset(y = -3.dp)
+            .offset(y = (-3).dp)
     )
 
-}
-
-
-@Preview
-@Composable
-fun DatePickerDialogPreview() {
-    val state = rememberMaterialDialogState()
-    CustomDatePickerDialog(deadlineValueState = state)
-    state.show()
 }
 
 
@@ -458,11 +448,11 @@ private fun stringPriorityResource(priority: Priority) : String = when (priority
 fun dateToString(dateInMillis : Long?,
                  isStringNonEmpty : Boolean = false,
                  resourceString : String = "") : String {
-    if (dateInMillis == null)
-        if (!isStringNonEmpty) return ""
-        else return resourceString
+    return if (dateInMillis == null)
+        if (!isStringNonEmpty) ""
+        else resourceString
     else {
         val sdf = SimpleDateFormat("dd MMM yyyy", Locale("ru"))
-        return sdf.format(dateInMillis)
+        sdf.format(dateInMillis)
     }
 }

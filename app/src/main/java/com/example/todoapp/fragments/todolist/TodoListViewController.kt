@@ -3,6 +3,7 @@ package com.example.todoapp.fragments.todolist
 import android.app.Activity
 import android.util.Log
 import android.view.MenuItem
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 
 import androidx.core.graphics.drawable.toDrawable
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
+import com.example.todoapp.SettingListDialogFragment
+import com.example.todoapp.SystemTheme
 import com.example.todoapp.adapter.TodoAdapter
 import com.example.todoapp.app.appComponent
 import com.example.todoapp.databinding.FragmentTodoListBinding
@@ -63,6 +66,12 @@ class TodoListViewController @Inject constructor(
                     viewModel.syncro()
                     true
                 }
+
+                R.id.menu_settings -> {
+                    findNavController(rootViewBinding.root)
+                        .navigate(R.id.action_todoListFragment_to_settingListDialogFragment)
+                    true
+                }
                 else -> false
             }
         }
@@ -86,4 +95,6 @@ class TodoListViewController @Inject constructor(
 
         adapter.setList(viewModel.listOfItems.value!!.filter { (!it.done && !isDoneShown) || isDoneShown })
     }
+
+
 }

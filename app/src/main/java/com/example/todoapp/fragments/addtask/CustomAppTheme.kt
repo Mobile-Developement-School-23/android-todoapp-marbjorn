@@ -1,24 +1,11 @@
 package com.example.todoapp.fragments.addtask
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
-import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.fontResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.core.content.res.ResourcesCompat
 import com.example.todoapp.R
 import com.example.todoapp.fragments.addtask.theme.body
 import com.example.todoapp.fragments.addtask.theme.buttonText
@@ -27,8 +14,6 @@ import com.example.todoapp.fragments.addtask.theme.subhead
 import com.example.todoapp.fragments.addtask.theme.title
 
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun AppTheme (darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit = {}) {
 
