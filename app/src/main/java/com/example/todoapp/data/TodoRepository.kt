@@ -1,5 +1,6 @@
 package com.example.todoapp.data
 
+import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -15,7 +16,7 @@ import javax.inject.Inject
 class TodoRepository @Inject constructor(val taskDao: TaskDao,
                                          val prefs : SharedPrefs,
                                          val api : TodoApi,
-                                         context : Context) {
+                                         val application: Application) {
 
     private var _todoList : MutableLiveData<List<TodoItemData>>
     val todoList : LiveData<List<TodoItemData>>

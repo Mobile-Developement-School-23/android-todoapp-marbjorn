@@ -1,8 +1,12 @@
 package com.example.todoapp.fragments.addtask
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,11 +14,11 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
@@ -27,6 +31,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -48,22 +53,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.todoapp.R
 import com.example.todoapp.fragments.addtask.theme.spacings
 import com.example.todoapp.model.Priority
 import com.example.todoapp.model.TodoItemData
 import com.example.todoapp.vm.AddTaskEvent
-import com.example.todoapp.vm.AddTaskModel
-import com.example.todoapp.vm.AddTaskModelFactory
-import com.google.accompanist.themeadapter.appcompat.AppCompatTheme
-import com.maxkeppeker.sheets.core.models.base.rememberSheetState
-import com.maxkeppeler.sheets.calendar.CalendarDialog
-import com.maxkeppeler.sheets.calendar.models.CalendarConfig
-import com.maxkeppeler.sheets.calendar.models.CalendarSelection
-import com.maxkeppeler.sheets.calendar.models.CalendarStyle
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.MaterialDialogState
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Calendar
 import java.util.Locale
@@ -71,7 +75,7 @@ import java.util.UUID
 
 val todoItemData = TodoItemData(
     id = "",
-    text = "Заглушка",
+    text = "Preview Example",
     changedAt = Calendar.getInstance().timeInMillis,
     createdAt = Calendar.getInstance().timeInMillis,
     importance = Priority.HIGH,
@@ -87,12 +91,13 @@ fun AddTaskScreen (
     navController: NavController = NavController(LocalContext.current)
 ) {
     var dropdownMenuExpanded by rememberSaveable { mutableStateOf(false) }
-    var textValue by rememberSaveable { mutableStateOf("") }
+    val textValue = remember { mutableStateOf("") }
     var priorityValue by remember { mutableStateOf(Priority.MEDIUM) }
 
     var switchValue by remember { mutableStateOf(false) }
 
-    val deadlineValueState = rememberSheetState()
+    val nonEmptyString = stringResource(id = R.string.deadline_not_selected)
+    val deadlineValueState = rememberMaterialDialogState()
     var deadlineDate by remember {
         mutableStateOf<Long?>(null)
     }
@@ -103,15 +108,6 @@ fun AddTaskScreen (
         mutableStateOf(false)
     }
 
-    CalendarDialog(
-        state = deadlineValueState,
-        selection = CalendarSelection.Date { date ->
-            run {
-                deadlineDate = date.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000
-                deadlineString = stringDate(deadlineDate)
-            }
-        }
-    )
 
     val verticalScrollState = rememberScrollState()
     val alpha: Int by animateIntAsState(if (verticalScrollState.value > 0) 12 else 0)
@@ -121,10 +117,10 @@ fun AddTaskScreen (
         Log.d("Id", initialTodoItem.toString())
         deleteButtonEnabled = true
         switchValue = initialTodoItem.value!!.deadline != null
-        textValue = initialTodoItem.value!!.text
+        textValue.value = initialTodoItem.value!!.text
         priorityValue = initialTodoItem.value!!.importance
         deadlineDate = initialTodoItem.value!!.deadline
-        deadlineString = stringDate(deadlineDate)
+        deadlineString = dateToString(deadlineDate, switchValue, nonEmptyString)
         isInitialTodoItemInitialized.value = true
     }
 
@@ -138,25 +134,26 @@ fun AddTaskScreen (
                 TopAppBar(
                     title = {},
                     colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.primary
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     navigationIcon = {
                         IconButton(onClick = {   //close button
                             navController.navigate(R.id.action_addTaskFragment_to_todoListFragment)
                         }) {
-                            Icon(Icons.Outlined.Close, null)
+                            Icon(painterResource(id = R.drawable.round_close_24), null)
                         }
                     },
                     actions = {
-                        Button(
-                            onClick = { //save button
+                        PressIconButton(
+                            onClick = {
                                 onEvent(
                                     AddTaskEvent.AddOrUpdate,
                                     TodoItemData(
                                         id = if (initialTodoItem.value == null)
                                             UUID.randomUUID().toString()
-                                            else initialTodoItem.value!!.id,
-                                        text = textValue,
+                                        else initialTodoItem.value!!.id,
+                                        text = textValue.value,
                                         importance = priorityValue,
                                         deadline = deadlineDate,
                                         createdAt = if (initialTodoItem.value != null)
@@ -167,17 +164,24 @@ fun AddTaskScreen (
                                 )
                                 navController.navigate(R.id.action_addTaskFragment_to_todoListFragment)
                             },
-                            shape = RectangleShape,
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = Color.Transparent
-                            )
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.save).uppercase(),
-                                color = colorResource(id = R.color.blue),
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
+                            ),
+                            text = {
+                                Text(
+                                    text = stringResource(id = R.string.save).uppercase(),
+                                    color = colorResource(id = R.color.blue),
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.baseline_save_24),
+                                    contentDescription = null,
+                                    tint = colorResource(id = R.color.blue)
+                                )
+                            }
+                        )
                     })
             }
         }) {
@@ -191,33 +195,8 @@ fun AddTaskScreen (
                     end = MaterialTheme.spacings.standartPadding
                 )
         ) {
-            OutlinedTextField( //text field
-                value = textValue,
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    focusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
-                    unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer
-                ),
-                onValueChange = { textValue = it },
-                placeholder = {
-                    Text(
-                        "Что надо сделать...",
-                        color = colorResource(id = R.color.gray_light)
-                    )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .defaultMinSize(
-                        minHeight = 100.dp
-                    )
-                    .offset(y = 3.dp) //shifting shadow to bottom side
-                    .shadow(
-                        elevation = 5.dp,
-                        clip = false,
-                    )
-                    .offset(y = -3.dp)
-            )
+
+            TextField(textValue)
 
             //section with priority
             Column(
@@ -273,12 +252,7 @@ fun AddTaskScreen (
 
             }
 
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                color = colorResource(id = R.color.support_separator)
-            )
+            CustomDivider()
 
             //deadline section
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
@@ -294,7 +268,9 @@ fun AddTaskScreen (
                         stringResource(id = R.string.date),
                         style = MaterialTheme.typography.headlineMedium
                     )
-                    Text(deadlineString, style = MaterialTheme.typography.headlineSmall)
+                    Text(deadlineString,
+                        style = MaterialTheme.typography.headlineSmall,
+                        color = colorResource(id = R.color.blue))
                 }
                 //spacing between subsection and switch
                 Spacer(Modifier.weight(1f))
@@ -302,53 +278,170 @@ fun AddTaskScreen (
                 //deadline enable switch
                 Switch(
                     checked = switchValue,
+                    colors = SwitchDefaults.colors(
+                        checkedThumbColor = colorResource(id = R.color.blue),
+                        checkedTrackColor = colorResource(id = R.color.gray_light),
+                        uncheckedTrackColor = colorResource(id = R.color.gray_light)
+                    ),
                     onCheckedChange = {
                         switchValue = it
-                        Log.d("Switch", it.toString())
-                        if (switchValue == true) {
-                            deadlineValueState.show()
-                        } else {
+                        if (!switchValue) {
                             deadlineDate = null
-                            deadlineString = ""
                         }
+                        deadlineString = dateToString(deadlineDate, switchValue, nonEmptyString)
                     },
 
                     modifier = Modifier.padding(end = 10.dp)
                 )
             }
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 10.dp),
-                color = Color.Gray
-            )
+
+            CustomDivider()
+
             //delete button
-            Button(
-                modifier = Modifier.padding(bottom = MaterialTheme.spacings.largePadding),
-                enabled = deleteButtonEnabled,
+            PressIconButton(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = colorResource(id = R.color.red),
+                    disabledContentColor = MaterialTheme.colorScheme.onSecondary
+                ),
                 onClick = {
                     if (initialTodoItem.value != null) {
                         onEvent(AddTaskEvent.Delete, initialTodoItem.value!!)
                     }
                     navController.navigate(R.id.action_addTaskFragment_to_todoListFragment)
-                },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = colorResource(id = R.color.red)
-                )
-            ) {
-                Icon(
+                    } ,
+                icon = {
+                    Icon(
                     painter = painterResource(id = R.drawable.baseline_delete_24),
                     contentDescription = null,
                     modifier = Modifier.padding(end = MaterialTheme.spacings.smallPadding)
-                )
-                Text(
+                )},
+                text = {
+                    Text(
                     text = stringResource(id = R.string.delete).uppercase(),
-                    style = MaterialTheme.typography.labelMedium
+                    style = MaterialTheme.typography.labelMedium)
+                }
                 )
             }
         }
     }
+
+@Composable  //text field
+private fun TextField(textValue : MutableState<String> = mutableStateOf("")) {
+    OutlinedTextField(
+        value = textValue.value,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
+            focusedTextColor = MaterialTheme.colorScheme.onPrimary,
+            unfocusedTextColor = MaterialTheme.colorScheme.onPrimary,
+            cursorColor = MaterialTheme.colorScheme.onSecondary
+        ),
+        onValueChange = { textValue.value = it },
+        placeholder = {
+            Text(
+                stringResource(id = R.string.todo_edit_hint),
+                color = colorResource(id = R.color.gray_light)
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(
+                minHeight = 100.dp
+            )
+            .offset(y = 3.dp) //shifting shadow to bottom side
+            .shadow(
+                elevation = 5.dp,
+                clip = false,
+            )
+            .offset(y = -3.dp)
+    )
+
+}
+
+
+@Preview
+@Composable
+fun DatePickerDialogPreview() {
+    val state = rememberMaterialDialogState()
+    CustomDatePickerDialog(deadlineValueState = state)
+    state.show()
+}
+
+
+
+@Composable
+fun CustomDatePickerDialog(
+    deadlineValueState : MaterialDialogState = rememberMaterialDialogState(),
+    deadlineDate : MutableState<Long?> = mutableStateOf(null),
+    deadlineString : MutableState<String> = mutableStateOf(""),
+    isDialogEnable : Boolean = true,
+    msgNotSelected : String = ""
+) {
+    MaterialDialog(
+        dialogState = deadlineValueState,
+        backgroundColor = MaterialTheme.colorScheme.secondary,
+        buttons = {
+            positiveButton(text = "Ok", textStyle = MaterialTheme.typography.labelMedium)
+            negativeButton(text = "Cancel", textStyle = MaterialTheme.typography.labelMedium)
+        }
+    ) {
+        datepicker(
+            colors = DatePickerDefaults.colors(
+                headerBackgroundColor = colorResource(id = R.color.blue),
+                dateActiveBackgroundColor = colorResource(id = R.color.blue),
+                dateActiveTextColor = MaterialTheme.colorScheme.onSecondary,
+                dateInactiveTextColor = MaterialTheme.colorScheme.onSecondary,
+                calendarHeaderTextColor = MaterialTheme.colorScheme.onSecondary
+            ),
+            initialDate = if (deadlineDate.value == null) LocalDate.now()
+            else Instant.ofEpochMilli(deadlineDate.value!!)
+                .atZone(ZoneId.systemDefault()).toLocalDate()
+        ) {
+            deadlineDate.value = it.atStartOfDay().toEpochSecond(ZoneOffset.UTC)*1000
+            deadlineString.value = dateToString(deadlineDate.value, isDialogEnable, msgNotSelected)
+        }
+    }
+}
+
+//animated button
+@Preview
+@Composable
+fun PressIconButton(
+    modifier: Modifier = Modifier,
+    colors : ButtonColors = ButtonDefaults.buttonColors(),
+    onClick: () -> Unit = {},
+    icon: @Composable () -> Unit = {},
+    text: @Composable () -> Unit = {},
+    interactionSource: MutableInteractionSource =
+        remember { MutableInteractionSource() },
+) {
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val shift by animateDpAsState(targetValue = if (isPressed) 3.dp else 0.dp)
+    Button(onClick = onClick, modifier = modifier, colors = colors,
+        interactionSource = interactionSource) {
+        AnimatedVisibility(
+            visible = isPressed) {
+            Row {
+                icon()
+                Spacer(Modifier.size(shift))
+            }
+        }
+        text()
+    }
+}
+
+
+@Composable
+private fun CustomDivider() {
+    Divider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        color = colorResource(id = R.color.support_separator)
+    )
 }
 
 //getting string resource by priority value
@@ -358,8 +451,16 @@ private fun stringPriorityResource(priority: Priority) : String = when (priority
     Priority.MEDIUM -> stringResource(R.string.priority_common)
     Priority.LOW -> stringResource(R.string.priority_low)
 }
-fun stringDate(dateInMillis : Long?) : String {
-    if (dateInMillis == null) return ""
+
+
+
+
+fun dateToString(dateInMillis : Long?,
+                 isStringNonEmpty : Boolean = false,
+                 resourceString : String = "") : String {
+    if (dateInMillis == null)
+        if (!isStringNonEmpty) return ""
+        else return resourceString
     else {
         val sdf = SimpleDateFormat("dd MMM yyyy", Locale("ru"))
         return sdf.format(dateInMillis)

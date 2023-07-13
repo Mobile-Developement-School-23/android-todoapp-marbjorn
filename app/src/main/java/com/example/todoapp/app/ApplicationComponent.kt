@@ -64,11 +64,11 @@ class TodoRepositoryModule {
     }
     @Provides
     fun providesTodoRepository(taskDao: TaskDao,
-                               context: Context,
+                               application: Application,
                                api : TodoApi,
                                prefs: SharedPrefs
     ) : TodoRepository {
-        return TodoRepository(taskDao, prefs, api, context)
+        return TodoRepository(taskDao, prefs, api, application)
     }
 
     @Provides

@@ -18,14 +18,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.todoapp.app.appComponent
 import com.example.todoapp.vm.AddTaskModel
-
-import com.google.accompanist.themeadapter.appcompat.AppCompatTheme
-import com.google.accompanist.themeadapter.appcompat.createAppCompatTheme
-import com.google.accompanist.themeadapter.material.MdcTheme
-import com.google.accompanist.themeadapter.material.createMdcTheme
-import com.google.accompanist.themeadapter.material3.Mdc3Theme
-import com.google.accompanist.themeadapter.material3.createMdc3Theme
-
 class AddTaskFragment : Fragment() {
 
     var fragmentViewComponent : AddTaskFragmentViewComponent? = null
