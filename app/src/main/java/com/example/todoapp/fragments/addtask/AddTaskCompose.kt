@@ -29,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -42,23 +43,26 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.todoapp.R
-import com.example.todoapp.fragments.addtask.theme.colors
-import com.example.todoapp.fragments.addtask.theme.customTypography
 import com.example.todoapp.fragments.addtask.theme.spacings
 import com.example.todoapp.model.Priority
 import com.example.todoapp.model.TodoItemData
 import com.example.todoapp.vm.AddTaskEvent
 import com.example.todoapp.vm.AddTaskModel
 import com.example.todoapp.vm.AddTaskModelFactory
+import com.google.accompanist.themeadapter.appcompat.AppCompatTheme
 import com.maxkeppeker.sheets.core.models.base.rememberSheetState
 import com.maxkeppeler.sheets.calendar.CalendarDialog
+import com.maxkeppeler.sheets.calendar.models.CalendarConfig
 import com.maxkeppeler.sheets.calendar.models.CalendarSelection
+import com.maxkeppeler.sheets.calendar.models.CalendarStyle
 import java.text.SimpleDateFormat
 import java.time.ZoneOffset
 import java.util.Calendar
@@ -106,7 +110,8 @@ fun AddTaskScreen (
                 deadlineDate = date.atStartOfDay().toEpochSecond(ZoneOffset.UTC) * 1000
                 deadlineString = stringDate(deadlineDate)
             }
-        })
+        }
+    )
 
     val verticalScrollState = rememberScrollState()
     val alpha: Int by animateIntAsState(if (verticalScrollState.value > 0) 12 else 0)
@@ -132,6 +137,9 @@ fun AddTaskScreen (
             ) {
                 TopAppBar(
                     title = {},
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    ),
                     navigationIcon = {
                         IconButton(onClick = {   //close button
                             navController.navigate(R.id.action_addTaskFragment_to_todoListFragment)
@@ -166,8 +174,8 @@ fun AddTaskScreen (
                         ) {
                             Text(
                                 text = stringResource(id = R.string.save).uppercase(),
-                                color = MaterialTheme.colors.blue,
-                                style = MaterialTheme.customTypography.buttonText
+                                color = colorResource(id = R.color.blue),
+                                style = MaterialTheme.typography.labelMedium
                             )
                         }
                     })
@@ -186,16 +194,16 @@ fun AddTaskScreen (
             OutlinedTextField( //text field
                 value = textValue,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = MaterialTheme.colors.white,
-                    unfocusedContainerColor = MaterialTheme.colors.white,
-                    focusedBorderColor = MaterialTheme.colors.grayLight,
-                    unfocusedBorderColor = MaterialTheme.colors.grayLight
+                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    focusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
+                    unfocusedBorderColor = MaterialTheme.colorScheme.primaryContainer
                 ),
                 onValueChange = { textValue = it },
                 placeholder = {
                     Text(
                         "Что надо сделать...",
-                        color = MaterialTheme.colors.grayLight
+                        color = colorResource(id = R.color.gray_light)
                     )
                 },
                 modifier = Modifier
@@ -220,7 +228,7 @@ fun AddTaskScreen (
             ) {
                 Text( //Importance label
                     stringResource(id = R.string.importance),
-                    style = MaterialTheme.customTypography.title
+                    style = MaterialTheme.typography.headlineMedium
                 )
                 DropdownMenu( //Dropdown menu
                     expanded = dropdownMenuExpanded,
@@ -230,7 +238,7 @@ fun AddTaskScreen (
                     Text(stringResource(
                         id = R.string.priority_high
                     ),
-                        color = MaterialTheme.colors.red,
+                        color = colorResource(id = R.color.red),
                         modifier = Modifier
                             .padding(bottom = MaterialTheme.spacings.smallPadding)
                             .clickable {
@@ -260,7 +268,7 @@ fun AddTaskScreen (
                 // current priority
                 Text(
                     text = stringPriorityResource(priority = priorityValue),
-                    style = MaterialTheme.customTypography.subhead
+                    style = MaterialTheme.typography.headlineSmall
                 )
 
             }
@@ -269,7 +277,7 @@ fun AddTaskScreen (
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 10.dp),
-                color = Color.Gray
+                color = colorResource(id = R.color.support_separator)
             )
 
             //deadline section
@@ -284,9 +292,9 @@ fun AddTaskScreen (
                     //subsection with date labels
                     Text(
                         stringResource(id = R.string.date),
-                        style = MaterialTheme.customTypography.title
+                        style = MaterialTheme.typography.headlineMedium
                     )
-                    Text(deadlineString, style = MaterialTheme.customTypography.subhead)
+                    Text(deadlineString, style = MaterialTheme.typography.headlineSmall)
                 }
                 //spacing between subsection and switch
                 Spacer(Modifier.weight(1f))
@@ -326,7 +334,7 @@ fun AddTaskScreen (
                 },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colors.red
+                    contentColor = colorResource(id = R.color.red)
                 )
             ) {
                 Icon(
@@ -336,7 +344,7 @@ fun AddTaskScreen (
                 )
                 Text(
                     text = stringResource(id = R.string.delete).uppercase(),
-                    style = MaterialTheme.customTypography.buttonText
+                    style = MaterialTheme.typography.labelMedium
                 )
             }
         }

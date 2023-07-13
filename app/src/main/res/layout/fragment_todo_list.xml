@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:animateLayoutChanges="true"
     android:layout_height="match_parent"
     android:id="@+id/coordinator"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -14,10 +15,10 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="110dp"
-            app:titleTextAppearance="@style/LargeTitle"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
             app:expandedTitleMarginStart="35dp"
             app:expandedTitleMarginBottom="40dp"
+            android:background="@color/back_primary"
             >
 
             <TextView
@@ -41,7 +42,7 @@
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
                 app:menu="@menu/menu_todolist"
                 android:layout_gravity="bottom"
-                app:title="My tasks"/>
+                app:title="My tasks" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>

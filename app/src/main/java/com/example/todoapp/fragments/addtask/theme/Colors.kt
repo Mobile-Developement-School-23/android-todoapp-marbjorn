@@ -9,17 +9,16 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.colorspace.ColorModel
 import androidx.compose.ui.graphics.colorspace.ColorSpace
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import com.example.todoapp.R
-
+/*
 @Immutable
 data class CustomColorsLight (
-    val separator : Color = Color(color = parseColor("#33000000")),
+    val separator : Color = Color(color = ContextCompat.getColor(LocalContext.current, R.color.support_separator)),
     val overlay : Color = Color(color = parseColor("#0F000000")),
-    val labelPrimary : Color = Color(color = parseColor("#00000000")),
-    val laberSecondary : Color = Color(color = parseColor("#99000000")),
-    val labelTertiary : Color = Color(color = parseColor("#4D000000")),
     val labelDisable : Color = Color(color = parseColor("#26000000")),
     val red : Color = Color(color = parseColor("#FF3B30")),
     val green : Color = Color(color = parseColor("#34C759")),
@@ -27,8 +26,6 @@ data class CustomColorsLight (
     val gray : Color = Color(color = parseColor("#8E8E93")),
     val grayLight : Color = Color(color = parseColor("#D1D1D6")),
     val white : Color = Color(color = parseColor("#FFFFFF")),
-    val backPrimary : Color = Color(color = parseColor("#F7F6F2")),
-    val backSecondary : Color = Color(color = parseColor("#FFFFFF")),
     val backElevated : Color = Color(color = parseColor("#FFFFFF")),
 )
 
@@ -78,4 +75,4 @@ data class CustomColorsDark (
     val backElevated : Color = Color(color = parseColor("#3C3C3F")),
 )
 
-val LocalColorsDark = compositionLocalOf { CustomColorsDark() }
+val LocalColorsDark = compositionLocalOf { CustomColorsDark() }*/

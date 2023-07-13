@@ -43,16 +43,12 @@ class TodoListViewController @Inject constructor(
             LinearLayoutManager(fragment.requireActivity().applicationContext, LinearLayoutManager.VERTICAL, false)
         rvTodolist.layoutManager = layoutManager
 
-        val scroller = LinearSmoothScroller(fragment.requireContext())
-        layoutManager.isSmoothScrollbarEnabled = true
         viewModel.listOfItems.observe(lifecycleOwner){
             newList ->
                 val count = newList.filter { it.done }.size
                 val str = fragment.requireActivity().getString(R.string.str_done, count)
                 tvDoneCount.setText(str)
                 adapter.setList(newList!!.filter { (!it.done && !isDoneShown) || isDoneShown })
-                scroller.setTargetPosition(0)
-                layoutManager.startSmoothScroll(scroller)
         }
     }
 
