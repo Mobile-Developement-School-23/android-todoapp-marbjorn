@@ -2,10 +2,6 @@ package com.example.todoapp.app
 
 import android.app.Application
 import android.content.Context
-import dagger.Module
-import dagger.Provides
-import kotlinx.coroutines.NonDisposableHandle.parent
-import javax.inject.Inject
 
 
 class App : Application() {

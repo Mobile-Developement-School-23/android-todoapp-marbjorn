@@ -53,6 +53,7 @@ class TodoRepository @Inject constructor(val taskDao: TaskDao,
 
     suspend fun syncItemsFromRemote() : State {
         val _revision = prefs.getRevision()
+        getLocalTasks()
         rewriteItemsFromRemote()
         val listFromDb = TodoListWrapper(
             list = taskDao.getAllTasksAsList(),

@@ -1,8 +1,12 @@
 package com.example.todoapp.app
 
 import android.app.Application
+import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.NotificationCompat
 import com.example.todoapp.data.SharedPrefs
 import com.example.todoapp.api.NetworkConnectivityObserver
 import com.example.todoapp.api.TodoApi
@@ -20,6 +24,7 @@ import dagger.Component
 import dagger.Module
 import dagger.Provides
 import javax.inject.Scope
+import javax.inject.Singleton
 
 @Scope
 annotation class ApplicationScope
@@ -79,6 +84,7 @@ class TodoRepositoryModule {
             AppCompatDelegate.setDefaultNightMode(this.getSystemMode())
         }
     }
+
 
 }
 

@@ -15,6 +15,7 @@ import com.example.todoapp.api.NetworkConnectivityObserver
 import com.example.todoapp.data.State
 import com.example.todoapp.data.TodoRepository
 import com.example.todoapp.model.TodoItemData
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -48,9 +49,10 @@ class TodoViewModel @Inject constructor(
             status = it
             if (it == ConnectivityObserver.Status.Available) {
                 val statusResponse = State.Success//todoRepository.syncItemsFromRemote()
-                Toast.makeText(application.applicationContext, notifySync(statusResponse), Toast.LENGTH_SHORT).show()
             }
         }.launchIn(viewModelScope)
+
+        syncro()
     }
 
     fun change(todoItemDB: TodoItemData) {
@@ -62,7 +64,6 @@ class TodoViewModel @Inject constructor(
     fun syncro() {
         viewModelScope.launch {
             val state = todoRepository.syncItemsFromRemote()
-            Toast.makeText(application.applicationContext, notifySync(state), Toast.LENGTH_SHORT).show()
             Log.d("STATE", state.code.toString())
         }
     }
@@ -70,10 +71,10 @@ class TodoViewModel @Inject constructor(
     private fun hasInternetConnection() : Boolean {
         return status == ConnectivityObserver.Status.Available
     }
-
+/*
 
     fun notifySync(state : State) : String = when(state) {
             State.Success -> "Синхронизация выполнена успешно"
             else -> "Ошибка синхронизации"
-    }
+    }*/
 }
