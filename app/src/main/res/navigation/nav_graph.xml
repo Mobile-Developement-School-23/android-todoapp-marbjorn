@@ -45,7 +45,7 @@
     </fragment>
     <dialog
         android:id="@+id/settingListDialogFragment"
-        android:name="com.example.todoapp.SettingListDialogFragment"
+        android:name="com.example.todoapp.fragments.settingsdialog.SettingListDialogFragment"
         android:label="fragment_setting_list_dialog_list_dialog"
         tools:layout="@layout/fragment_setting_list_dialog_list_dialog" >
         <action

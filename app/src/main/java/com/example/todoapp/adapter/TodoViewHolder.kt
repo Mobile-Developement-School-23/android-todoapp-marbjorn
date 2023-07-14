@@ -1,6 +1,8 @@
 package com.example.todoapp.adapter
 
+import android.animation.ValueAnimator
 import android.graphics.Paint
+import android.view.animation.LinearInterpolator
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -16,13 +18,16 @@ class TodoViewHolder(
     private val viewModel: TodoViewModel
     ) : RecyclerView.ViewHolder(binding.root) {
 
+        private lateinit var animator : ValueAnimator
         fun onBind(todoItem : TodoItemData) = with(binding){
             cbDone.isChecked = todoItem.done
+            setAnimation()
             tvText.text = todoItem.text
             strikeText(tvText)
             setIconVisibility(todoItem)
             modifyByImportance(todoItem)
             cbDone.setOnClickListener {
+                animator.start()
                 todoItem.done = cbDone.isChecked
                 setIconVisibility(todoItem)
                 todoItem.changedAt = Calendar.getInstance().timeInMillis
@@ -60,5 +65,15 @@ class TodoViewHolder(
     private fun setIconVisibility(todoItem: TodoItemData) = with(binding) {
         if (!todoItem.done) ivPriority.visibility = ImageView.VISIBLE
         else ivPriority.visibility = ImageView.GONE
+    }
+
+    private fun setAnimation() = with(binding) {
+        animator = ValueAnimator.ofFloat(0f, 1f)
+        animator.duration = 750
+        animator.interpolator = LinearInterpolator()
+        animator.addUpdateListener { anim ->
+            anim.animatedValue as Float
+            cbDone.alpha = anim.animatedFraction
+        }
     }
     }

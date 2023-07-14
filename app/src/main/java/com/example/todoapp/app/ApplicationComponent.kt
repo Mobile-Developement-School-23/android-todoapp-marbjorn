@@ -2,6 +2,7 @@ package com.example.todoapp.app
 
 import android.app.Application
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.todoapp.data.SharedPrefs
 import com.example.todoapp.api.NetworkConnectivityObserver
 import com.example.todoapp.api.TodoApi
@@ -10,6 +11,7 @@ import com.example.todoapp.data.NetworkWorkerComponent
 import com.example.todoapp.data.TaskDao
 import com.example.todoapp.data.TaskDatabase
 import com.example.todoapp.data.TodoRepository
+import com.example.todoapp.fragments.settingsdialog.SettingsDialogComponent
 import com.example.todoapp.fragments.todolist.TodoListFragmentComponent
 import com.example.todoapp.vm.AddTaskModelFactory
 import com.example.todoapp.vm.TodoViewModelFactory
@@ -33,6 +35,7 @@ interface ApplicationComponent {
     fun addTaskFactory() : AddTaskModelFactory
     fun todoListFragmentComponent() : TodoListFragmentComponent.Factory
     fun workerComponent() : NetworkWorkerComponent.Factory
+    fun settingsDialogComponent() : SettingsDialogComponent.Factory
 
     @Component.Factory
     interface Factory {
@@ -71,8 +74,10 @@ class TodoRepositoryModule {
     }
 
     @Provides
-    fun providePrefs(context: Context) : SharedPrefs {
-        return SharedPrefs(context)
+    fun providePrefs(application: Application) : SharedPrefs {
+        return SharedPrefs(application).apply {
+            AppCompatDelegate.setDefaultNightMode(this.getSystemMode())
+        }
     }
 
 }

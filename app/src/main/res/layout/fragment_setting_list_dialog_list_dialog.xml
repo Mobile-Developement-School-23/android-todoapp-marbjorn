@@ -9,7 +9,7 @@
     android:layout_margin="16dp"
     android:paddingBottom="32dp"
     android:background="@color/back_secondary"
-    tools:context=".SettingListDialogFragment">
+    tools:context=".fragments.settingsdialog.SettingListDialogFragment">
 
     <com.google.android.material.textview.MaterialTextView
         android:layout_width="match_parent"

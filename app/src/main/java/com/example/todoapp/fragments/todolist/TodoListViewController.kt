@@ -1,27 +1,15 @@
 package com.example.todoapp.fragments.todolist
 
-import android.app.Activity
-import android.util.Log
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 
-import androidx.core.graphics.drawable.toDrawable
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSmoothScroller
-import androidx.recyclerview.widget.RecyclerView
 import com.example.todoapp.R
-import com.example.todoapp.SettingListDialogFragment
-import com.example.todoapp.SystemTheme
 import com.example.todoapp.adapter.TodoAdapter
-import com.example.todoapp.app.appComponent
 import com.example.todoapp.databinding.FragmentTodoListBinding
 import com.example.todoapp.vm.TodoViewModel
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import javax.inject.Inject
 
 class TodoListViewController @Inject constructor(
