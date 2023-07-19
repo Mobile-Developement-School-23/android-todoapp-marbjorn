@@ -29,7 +29,7 @@ class TodoListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         fragmentComponent = requireContext().appComponent
-            .todoListFragmentComponent().create(this, viewModel)
+            .todoListFragmentComponent().create(this)
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

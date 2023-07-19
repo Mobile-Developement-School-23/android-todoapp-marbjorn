@@ -14,19 +14,11 @@ import javax.inject.Inject
 
 class TodoAdapter @Inject constructor(val fragment: TodoListFragment, val todoViewModel : TodoViewModel)
     : RecyclerView.Adapter<TodoViewHolder>() {
-    private var todoItems = listOf<TodoItemData>()
-
+    var todoItems = listOf<TodoItemData>()
+    var todoItemsUnfiltered = listOf<TodoItemData>()
     //
-    fun setList(newList : List<TodoItemData>) {/*
-        val (checked, unchecked) = newList.partition { todoItemData -> todoItemData.done }
-        val sortedList = mutableListOf<TodoItemData>()
-        sortedList.addAll(unchecked)
-        sortedList.addAll(checked)
-        val differUtil = DifferUtilCalculator(todoItems, sortedList)
-        val diffResult = DiffUtil.calculateDiff(differUtil)
-        todoItems = sortedList
-        */
-
+    fun setList(newList : List<TodoItemData>) {
+        todoItemsUnfiltered = newList
         val differUtil = DifferUtilCalculator(todoItems, newList)
         val diffResult = DiffUtil.calculateDiff(differUtil)
         todoItems = newList

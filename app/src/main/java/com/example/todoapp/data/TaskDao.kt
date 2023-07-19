@@ -11,10 +11,10 @@ import com.example.todoapp.model.TodoItemData
 
 @Dao
 interface TaskDao {
-    @Query("SELECT * FROM task_table ORDER BY changedAt DESC")
+    @Query("SELECT * FROM task_table ORDER BY id DESC")
     fun getAllTasks() : LiveData<List<TodoItemData>>
 
-    @Query("SELECT * FROM task_table ORDER BY changedAt DESC")
+    @Query("SELECT * FROM task_table ORDER BY id DESC")
     fun getAllTasksAsList() : List<TodoItemData>
 
     @Delete

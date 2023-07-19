@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:layout_margin="16dp"
+    android:paddingBottom="32dp"
+    android:background="@color/back_secondary"
+    tools:context=".fragments.settingsdialog.SettingListDialogFragment">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textAppearance="@style/Title"
+        android:textStyle="bold"
+        android:text="Выберите тему:"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:textColor="@color/label_secondary"
+        android:paddingHorizontal="16dp"
+        android:text="Светлая"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:drawableLeft="@drawable/outline_light_mode_24"
+        android:textSize="18sp"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:textColor="@color/label_secondary"
+        android:paddingHorizontal="16dp"
+        android:text="Темная"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:drawableLeft="@drawable/outline_mode_night_24"
+        android:textSize="18sp"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_system"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="Как в системе"
+        android:paddingHorizontal="16dp"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:drawableLeft="@drawable/baseline_system_4_24"
+        android:textColor="@color/label_secondary"
+        android:textSize="18sp"/>
+
+
+
+
+</LinearLayout>

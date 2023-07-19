@@ -16,4 +16,12 @@
         android:actionLayout="@layout/fragment_todo_list"
         android:title="Sync with server"
         />
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/round_settings_24"
+        android:orderInCategory="100"
+        app:showAsAction="ifRoom"
+        android:actionLayout="@layout/fragment_todo_list"
+        android:title="Settings"
+        />
 </menu>

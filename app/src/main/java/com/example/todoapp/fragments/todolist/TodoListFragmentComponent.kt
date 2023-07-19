@@ -19,8 +19,7 @@ interface TodoListFragmentComponent {
     @Subcomponent.Factory
     interface Factory {
         fun create(
-            @BindsInstance fragment: TodoListFragment,
-            @BindsInstance viewModel: TodoViewModel
+            @BindsInstance fragment: TodoListFragment
         ) : TodoListFragmentComponent
     }
 

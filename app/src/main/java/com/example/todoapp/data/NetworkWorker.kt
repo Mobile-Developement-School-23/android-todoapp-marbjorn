@@ -39,6 +39,7 @@ class NetworkWorker constructor(
     @Inject
     lateinit var repo : TodoRepository
     override suspend fun doWork(): Result {
+        injectDependencies()
         return try {
             repo.syncItemsFromRemote()
             Result.success()
