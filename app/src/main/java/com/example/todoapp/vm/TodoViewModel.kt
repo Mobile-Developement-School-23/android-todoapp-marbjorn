@@ -71,10 +71,4 @@ class TodoViewModel @Inject constructor(
     private fun hasInternetConnection() : Boolean {
         return status == ConnectivityObserver.Status.Available
     }
-/*
-
-    fun notifySync(state : State) : String = when(state) {
-            State.Success -> "Синхронизация выполнена успешно"
-            else -> "Ошибка синхронизации"
-    }*/
 }
